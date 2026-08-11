@@ -1,0 +1,334 @@
+.ni-login {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--navy) 0%, var(--navyB) 55%, var(--navyC) 100%);
+  user-select: none;
+  touch-action: none;
+}
+
+/* The mesh sits behind a soft radial wash that lifts the card off it. */
+.ni-login__mesh {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.ni-login__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 45% at 28% 46%, var(--glow1), transparent 72%),
+    radial-gradient(45% 40% at 88% 88%, var(--glow2), transparent 70%);
+  pointer-events: none;
+}
+
+.ni-login__layout {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 56px;
+  padding: 48px 64px;
+  overflow: hidden;
+}
+
+.ni-login__intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 520px;
+}
+
+.ni-login__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+
+.ni-login__headline {
+  font-size: 34px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.16;
+  text-wrap: pretty;
+}
+
+.ni-login__sub {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(226, 232, 240, 0.66);
+}
+
+.ni-login__copyright {
+  font-size: 11px;
+  color: rgba(226, 232, 240, 0.4);
+  letter-spacing: 0.04em;
+}
+
+.ni-login__cardColumn {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow-y: auto;
+}
+
+.ni-login__card {
+  position: relative;
+  margin: auto;
+  width: 100%;
+  max-width: 416px;
+  padding: 32px;
+  border-radius: 22px;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.06) 55%,
+    rgba(255, 255, 255, 0.09)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(26px) saturate(140%);
+  -webkit-backdrop-filter: blur(26px) saturate(140%);
+  box-shadow:
+    0 32px 70px rgba(3, 16, 32, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Specular highlight along the card's top edge. */
+.ni-login__cardEdge {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+}
+
+.ni-login__title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.ni-login__hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(226, 232, 240, 0.66);
+  line-height: 1.6;
+}
+
+.ni-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ni-login__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ni-login__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.ni-login__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.ni-login__input::placeholder {
+  color: rgba(226, 232, 240, 0.45);
+}
+
+.ni-login__input:focus {
+  border-color: var(--focus);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ni-login__input--invalid {
+  border-color: #f87171;
+}
+
+.ni-login__password {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ni-login__password .ni-login__input {
+  padding-right: 44px;
+}
+
+.ni-login__reveal {
+  position: absolute;
+  right: 7px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: rgba(226, 232, 240, 0.7);
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.ni-login__reveal:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.ni-login__error {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: rgba(248, 113, 113, 0.16);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+  font-size: 12px;
+}
+
+.ni-login__options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ni-login__remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(226, 232, 240, 0.86);
+  font-size: 12.5px;
+}
+
+.ni-login__checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy);
+}
+
+.ni-login__checkbox--on {
+  border-color: var(--ondk);
+  background: var(--ondk);
+}
+
+.ni-login__forgot {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ondk);
+}
+
+.ni-login__submit {
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 11px;
+  background: linear-gradient(90deg, var(--btnA), var(--btnB));
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow:
+    0 12px 28px rgba(12, 42, 80, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: filter 0.18s ease;
+}
+
+.ni-login__submit:hover {
+  filter: brightness(1.1);
+}
+
+.ni-login__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(226, 232, 240, 0.55);
+  font-size: 11px;
+}
+
+.ni-login__divider::before,
+.ni-login__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.ni-login__sso {
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.18s ease;
+}
+
+.ni-login__sso:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ni-login__build {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(226, 232, 240, 0.5);
+}
+
+/* Below this width the intro column costs more than it earns. */
+@media (max-width: 900px) {
+  .ni-login__layout {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .ni-login__intro {
+    display: none;
+  }
+}

@@ -1,0 +1,203 @@
+/**
+ * Base layer: reset, document defaults, shared keyframes and scrollbars.
+ * Component styling lives beside each component.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--pgb);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--pg);
+  color: var(--txt);
+  font-size: 13px;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
+a {
+  color: var(--cyan2);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--cyan);
+}
+
+/* --------------------------------------------------------------- scrollbars */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 8px;
+}
+
+/* Scroll containers that hide their scrollbar entirely. */
+.ni-scroll-hidden {
+  scrollbar-width: none;
+}
+
+.ni-scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* --------------------------------------------------------------- keyframes */
+
+@keyframes niFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes niUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes niDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes niSlideL {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes niFlyPop {
+  from {
+    opacity: 0;
+    transform: translateX(-6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes niExpand {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    max-height: 720px;
+    transform: none;
+  }
+}
+
+@keyframes niBreath {
+  0%,
+  100% {
+    transform: scale(0.985);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ shared */
+
+/** Strips native button chrome, for buttons styled purely by their context. */
+.ni-bare {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+/** Inline flex wrapper used to keep SVG icons on the text baseline. */
+.ni-ico {
+  display: flex;
+}
+
+/** Pushes following siblings to the far edge of a flex row. */
+.ni-spacer {
+  flex: 1;
+}
+
+/** Single-line text that ellipsises rather than wrapping. */
+.ni-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * Keyboard focus ring. The original design shipped no focus indicator at all,
+ * which made the app unusable by keyboard; this restores one everywhere except
+ * the few controls that already style their own focused state.
+ */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ni-login__input:focus-visible,
+.ni-palette__input:focus-visible {
+  outline: none;
+}

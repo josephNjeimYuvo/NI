@@ -1,0 +1,285 @@
+.ni-topbar {
+  height: 56px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--bd);
+  box-shadow: var(--sh);
+  z-index: 20;
+}
+
+.ni-topbar__tabs {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.ni-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px 0 12px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--mut);
+  font-size: 12.5px;
+  font-weight: 500;
+  max-width: 190px;
+  transition: background 0.18s ease;
+}
+
+.ni-tab--active {
+  background: var(--hov);
+  border-bottom-color: var(--cyan);
+  color: var(--txt);
+  font-weight: 600;
+}
+
+.ni-tab__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-tab__close {
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ni-tab__close:hover {
+  opacity: 1;
+  background: var(--hov);
+}
+
+.ni-topbar__overflow {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  background: var(--hov);
+  border: 1px solid var(--bd);
+  color: var(--mut);
+  font-size: 11.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+/* Search affordance that opens the command palette. */
+.ni-topbar__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  width: 230px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--bd);
+  background: var(--inp);
+  color: var(--mut);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: border-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.ni-topbar__search:hover {
+  border-color: var(--cyan2);
+}
+
+.ni-topbar__searchLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.ni-topbar__kbd {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+}
+
+.ni-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ni-iconbutton {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.ni-iconbutton:hover {
+  background: var(--hov);
+  color: var(--cyan2);
+}
+
+/* Unread marker on the notification bell. */
+.ni-iconbutton__badge {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 2px var(--card);
+}
+
+/* ---------------------------------------------------------- breadcrumbs -- */
+
+.ni-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  padding: 14px 24px 0;
+}
+
+.ni-crumbs__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ni-crumbs__link {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--mut);
+}
+
+.ni-crumbs__link:hover {
+  color: var(--cyan2);
+}
+
+.ni-crumbs__link--current {
+  font-weight: 700;
+  color: var(--txt);
+  cursor: default;
+}
+
+.ni-crumbs__link--current:hover {
+  color: var(--txt);
+}
+
+.ni-crumbs__sep {
+  display: flex;
+  color: var(--mut);
+  opacity: 0.6;
+}
+
+/* ------------------------------------------------------- floating toggles -- */
+
+.ni-floating {
+  position: fixed;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 20px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  box-shadow: var(--sh);
+}
+
+.ni-floating--brand {
+  bottom: 64px;
+}
+
+.ni-floating--mode {
+  bottom: 24px;
+}
+
+.ni-brandSwatch {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.ni-brandSwatch--active {
+  background: var(--hov);
+}
+
+.ni-brandSwatch__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: scale(0.82);
+  transition: transform 0.18s ease;
+}
+
+.ni-brandSwatch--active .ni-brandSwatch__dot {
+  transform: scale(1);
+}
+
+.ni-modeButton {
+  height: 28px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--mut);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.ni-modeButton--active {
+  background: var(--navy);
+  color: #ffffff;
+}

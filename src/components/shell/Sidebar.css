@@ -1,0 +1,578 @@
+/* Shared by the expanded sidebar, the collapsed rail and the rail flyout. */
+
+.ni-sidebar {
+  position: relative;
+  z-index: 30;
+  width: 284px;
+  min-width: 284px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-right: 1px solid var(--bds);
+}
+
+.ni-sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 16px 16px 14px 16px;
+}
+
+.ni-sidebar__logo {
+  color: var(--logo);
+  display: flex;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ni-sidebar__toggle {
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.ni-sidebar__toggle:hover {
+  background: var(--hov);
+  color: var(--pri);
+}
+
+.ni-sidebar__rule {
+  height: 1px;
+  margin: 0 16px;
+  background: linear-gradient(90deg, transparent, var(--bd), transparent);
+}
+
+.ni-sidebar__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 10px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ni-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ni-sidebar__pinned {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 10px;
+}
+
+.ni-sidebar__sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 4px 8px;
+}
+
+.ni-sidebar__sectionLabel span:first-child {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--dim);
+}
+
+.ni-sidebar__sectionLabel span:last-child {
+  flex: 1;
+  height: 1px;
+  background: var(--bds);
+}
+
+/* -------------------------------------------------------------- category -- */
+
+.ni-cat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 38px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--txt);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ni-cat:hover {
+  background: var(--hov);
+}
+
+.ni-cat--active {
+  background: var(--tint);
+  box-shadow: inset 0 1px 2px rgba(var(--pRGB), 0.07);
+}
+
+/* Selection bar that grows out of the sidebar's left edge. */
+.ni-cat__bar {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 0 3px 3px 0;
+  background: var(--acc1);
+  transition: height 0.2s ease;
+}
+
+.ni-cat__bar--on {
+  height: 60%;
+}
+
+.ni-cat__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ni-cat__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-cat__count {
+  flex-shrink: 0;
+  min-width: 20px;
+  height: 19px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--tint);
+  color: var(--pri);
+  font-size: 10.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ni-cat__chevron {
+  display: flex;
+  color: var(--mut);
+  transition: transform 0.18s ease;
+}
+
+.ni-cat__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ------------------------------------------------------------------ tree -- */
+
+.ni-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 5px;
+  overflow: hidden;
+  animation: niExpand 0.3s cubic-bezier(0.32, 0.72, 0.35, 1);
+}
+
+.ni-tree--indent {
+  margin-left: 22px;
+}
+
+.ni-tree__empty {
+  padding: 6px 9px;
+  font-size: 11.5px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* Vendor groups and the flat leaves below them share one indent. */
+.ni-vendor,
+.ni-tree__leaves {
+  margin-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ni-vendor__button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 32px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--sec);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.ni-vendor__button:hover {
+  background: var(--hov);
+}
+
+.ni-vendor__initial {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--tint);
+  color: var(--acc1);
+  font-size: 10.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ni-vendor__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-vendor__chevron {
+  display: flex;
+  color: var(--mut);
+  opacity: 0.75;
+  transition: transform 0.18s ease;
+}
+
+.ni-vendor__chevron--open {
+  transform: rotate(180deg);
+}
+
+.ni-vendor__items {
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Leaf: an openable module. */
+.ni-leaf {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 30px;
+  padding: 0 8px 0 9px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--mut);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.ni-leaf:hover {
+  background: var(--tint);
+  color: var(--pri);
+}
+
+.ni-leaf--active {
+  background: var(--tint);
+  color: var(--pri);
+}
+
+.ni-leaf__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.ni-leaf__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- status -- */
+
+.ni-sidebar__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--bds);
+}
+
+.ni-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+  flex-shrink: 0;
+}
+
+.ni-sidebar__status span:last-child {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mut);
+}
+
+/* ------------------------------------------------------------------ rail -- */
+
+.ni-rail {
+  position: relative;
+  z-index: 30;
+  width: 66px;
+  min-width: 66px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border-right: 1px solid var(--bds);
+}
+
+.ni-rail__logo {
+  padding: 16px 0 12px 0;
+  color: var(--logo);
+  display: flex;
+  cursor: pointer;
+}
+
+.ni-rail__toggle {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.ni-rail__toggle:hover {
+  background: var(--hov);
+  color: var(--pri);
+}
+
+.ni-rail__rule {
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bd), transparent);
+}
+
+.ni-rail__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.ni-rail__divider {
+  width: 30px;
+  height: 1px;
+  margin: 8px 0;
+  background: var(--bds);
+}
+
+.ni-rail__button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.ni-rail__button:hover {
+  background: var(--hov);
+}
+
+.ni-rail__bar {
+  position: absolute;
+  left: -11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 0 3px 3px 0;
+  background: var(--acc1);
+  transition: height 0.2s ease;
+}
+
+.ni-rail__bar--on {
+  height: 60%;
+}
+
+.ni-rail__status {
+  padding: 12px 0 14px 0;
+}
+
+/* --------------------------------------------------------------- flyout -- */
+
+.ni-flyout__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+}
+
+.ni-flyout {
+  position: fixed;
+  left: 74px;
+  z-index: 45;
+  width: 252px;
+  max-height: 72vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  border: 1px solid var(--bd);
+  background: var(--spanel);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
+  animation: niFlyPop 0.16s ease;
+}
+
+.ni-flyout__header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 12px 10px 12px;
+  border-bottom: 1px solid var(--bds);
+}
+
+.ni-flyout__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--pri);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ni-flyout__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--txt);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-flyout__pin {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.ni-flyout__pin:hover {
+  background: var(--hov);
+  color: var(--pri);
+}
+
+.ni-flyout__body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Flyout vendors sit flush; sidebar vendors indent under their category. */
+.ni-flyout__vendor {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ni-flyout__vendorItems {
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Flyout leaves use an icon rather than a bullet, and are a touch taller. */
+.ni-leaf--flyout {
+  height: 31px;
+  padding: 0 8px;
+}
+
+.ni-leaf__icon {
+  display: flex;
+  opacity: 0.65;
+  flex-shrink: 0;
+}

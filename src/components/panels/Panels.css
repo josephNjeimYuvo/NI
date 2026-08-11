@@ -1,0 +1,542 @@
+/* Shared shell for the right-hand slide-over panels. */
+
+.ni-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.ni-overlay__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--ovl);
+  animation: niFade 0.18s ease;
+}
+
+.ni-panel-slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 400px;
+  max-width: 92vw;
+  background: var(--card);
+  border-left: 1px solid var(--bd);
+  box-shadow: var(--shx);
+  display: flex;
+  flex-direction: column;
+  animation: niSlideL 0.22s ease;
+}
+
+.ni-panel-slide__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 16px 12px 16px;
+}
+
+.ni-panel-slide__head--bordered {
+  padding: 16px;
+  border-bottom: 1px solid var(--bd);
+}
+
+.ni-panel-slide__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.ni-panel-slide__meta {
+  font-size: 11.5px;
+  color: var(--dim);
+}
+
+.ni-panel-slide__badge {
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: rgba(var(--bRGB), 0.14);
+  color: var(--cyan2);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.ni-panel-slide__link {
+  border: none;
+  background: transparent;
+  color: var(--cyan2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.ni-panel-slide__close {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ni-panel-slide__close:hover {
+  background: var(--hov);
+}
+
+.ni-panel-slide__body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* -------------------------------------------------------- notifications -- */
+
+.ni-notif__filters {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 12px 16px;
+  border-bottom: 1px solid var(--bd);
+}
+
+.ni-notif__filter {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 14px;
+  border: 1px solid var(--bd);
+  background: transparent;
+  color: var(--mut);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.ni-notif__filter--active {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: #ffffff;
+}
+
+.ni-notif__item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bd);
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.ni-notif__item:hover {
+  background: var(--hov);
+}
+
+/* Unread rows carry a faint wash so they read at a glance. */
+.ni-notif__item--unread {
+  background: rgba(var(--bRGB), 0.045);
+}
+
+.ni-notif__dot {
+  margin-top: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ni-notif__icon {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ni-notif__head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.ni-notif__title {
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.ni-notif__item--unread .ni-notif__title {
+  font-weight: 700;
+}
+
+.ni-notif__time {
+  font-size: 11px;
+  color: var(--mut);
+  white-space: nowrap;
+}
+
+.ni-notif__body {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--mut);
+  line-height: 1.55;
+}
+
+.ni-notif__actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.ni-notif__open {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--bd);
+  background: transparent;
+  color: var(--txt);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ni-notif__open:hover {
+  background: var(--hov);
+}
+
+.ni-notif__dismiss {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--mut);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ni-notif__dismiss:hover {
+  color: var(--txt);
+}
+
+.ni-panel-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.ni-panel-empty--top {
+  height: auto;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.ni-panel-empty__title {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.ni-panel-empty__text {
+  font-size: 12.5px;
+  color: var(--mut);
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+/* -------------------------------------------------------------- activity -- */
+
+.ni-activity__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bds);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.ni-activity__row:hover {
+  background: var(--inp);
+}
+
+.ni-activity__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ni-activity__name {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-activity__app {
+  font-size: 11.5px;
+  color: var(--dim);
+}
+
+.ni-activity__ago {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- toast -- */
+
+.ni-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  box-shadow: var(--shx);
+  animation: niUp 0.18s ease;
+}
+
+.ni-toast__text {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------- palette -- */
+
+.ni-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+
+.ni-palette__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.28);
+  backdrop-filter: blur(4px);
+  animation: niFade 0.18s ease;
+}
+
+/* The palette drops from the top edge rather than centring, so results have
+   room to grow downward without shifting the input. */
+.ni-palette__sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--spanel);
+  backdrop-filter: blur(28px);
+  border-bottom: 1px solid var(--bd);
+  box-shadow: 0 34px 60px -34px rgba(17, 24, 39, 0.4);
+  animation: niDrop 0.22s ease;
+}
+
+.ni-palette__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 40px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.ni-palette__search {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ni-palette__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--txt);
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  padding: 0;
+}
+
+.ni-palette__input::placeholder {
+  color: var(--dim);
+}
+
+.ni-palette__esc {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  padding: 5px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--bd);
+  background: var(--inp);
+  cursor: pointer;
+}
+
+.ni-palette__quick {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ni-palette__quickLabel {
+  font-size: 13px;
+  color: var(--mut);
+}
+
+.ni-palette__quickEmpty {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.ni-palette__quickItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: var(--txt);
+  text-align: left;
+}
+
+.ni-palette__quickItem:hover {
+  color: var(--cyan2);
+}
+
+.ni-palette__quickArrow {
+  display: flex;
+  color: var(--cyan2);
+  flex-shrink: 0;
+}
+
+.ni-palette__quickText {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ni-palette__results {
+  max-height: 52vh;
+  overflow-y: auto;
+  margin: 0 -8px;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ni-palette__group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ni-palette__groupLabel {
+  padding: 0 6px 6px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--mut);
+}
+
+.ni-palette__result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--txt);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.ni-palette__result:hover,
+.ni-palette__result--cursor {
+  background: var(--hov);
+}
+
+.ni-palette__resultIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--inp);
+  border: 1px solid var(--bd);
+  color: var(--acc1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ni-palette__resultText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ni-palette__resultLabel {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.ni-palette__resultPath {
+  font-size: 12px;
+  color: var(--mut);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-palette__resultType {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dim);
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--bd);
+  background: var(--inp);
+}
+
+.ni-palette__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 44px 20px;
+  text-align: center;
+}

@@ -1,0 +1,464 @@
+.ni-home {
+  padding: 24px;
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+.ni-home__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ni-home__side {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.ni-home__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ni-home__headingText {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.ni-home__headingMeta {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+
+.ni-panel {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--sh);
+}
+
+/* ------------------------------------------------------------- app tiles -- */
+
+.ni-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+.ni-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 124px;
+  padding: 16px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  color: var(--txt);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ni-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--cyan2);
+  box-shadow: 0 12px 28px rgba(var(--bRGB), 0.16);
+}
+
+.ni-tile--selected {
+  background: var(--sel);
+  border-color: var(--sel);
+  color: var(--onsel);
+}
+
+.ni-tile__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* ----------------------------------------------------------- module cards -- */
+
+.ni-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.ni-card {
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  background: var(--card);
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ni-card:hover {
+  border-color: var(--cyan2);
+  box-shadow: 0 10px 26px rgba(var(--bRGB), 0.12);
+}
+
+.ni-card--expanded {
+  border-color: var(--acc1);
+}
+
+.ni-card__head {
+  width: 100%;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  color: var(--txt);
+  cursor: pointer;
+  text-align: left;
+}
+
+.ni-card__icon {
+  color: var(--acc1);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.ni-card__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ni-card__pin {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--mut);
+  opacity: 0.45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    opacity 0.12s ease,
+    background 0.12s ease;
+}
+
+.ni-card__pin:hover {
+  opacity: 1;
+  background: var(--hov);
+}
+
+.ni-card__pin--pinned {
+  color: var(--pri);
+  opacity: 1;
+}
+
+.ni-card__chevron {
+  display: flex;
+  color: var(--mut);
+  transition: transform 0.2s ease;
+}
+
+.ni-card__chevron--open {
+  transform: rotate(180deg);
+}
+
+.ni-card__leafMark {
+  display: flex;
+  color: var(--mut);
+  opacity: 0.55;
+}
+
+.ni-card__children {
+  padding: 0 16px 12px 16px;
+  animation: niFade 0.2s ease;
+}
+
+.ni-card__childList {
+  border-left: 2px solid var(--acc1);
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ni-card__child {
+  text-align: left;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mut);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.ni-card__child:hover {
+  background: var(--hov);
+  color: var(--cyan2);
+}
+
+/* ---------------------------------------------------------- quick access -- */
+
+.ni-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ni-section__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.ni-section__title {
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.ni-section__hint {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  font-size: 12px;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-section__action {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: var(--pri);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ni-section__action:hover {
+  color: var(--cyan2);
+}
+
+.ni-quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.ni-quick__card {
+  position: relative;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.ni-quick__card:hover {
+  transform: translateY(-2px);
+  border-color: var(--pri);
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.1);
+}
+
+/* The card the pointer is currently over during a reorder drag. */
+.ni-quick__card--dropTarget {
+  border-color: var(--pri);
+}
+
+.ni-quick__card--dragging {
+  opacity: 0.45;
+}
+
+.ni-quick__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ni-entryIcon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--inp);
+  border: 1px solid var(--bds);
+  color: var(--acc1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ni-quick__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 16px;
+}
+
+.ni-quick__name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-quick__app {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pri);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-quick__remove {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--mut);
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    opacity 0.12s ease,
+    background 0.12s ease;
+}
+
+.ni-quick__remove:hover {
+  opacity: 1;
+  background: var(--hov);
+}
+
+.ni-empty-dashed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px;
+  border: 1.5px dashed var(--bd);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.ni-empty-dashed__title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.ni-empty-dashed__hint {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------- recents -- */
+
+.ni-recent {
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.ni-recent__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--bds);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.ni-recent__row:last-child {
+  border-bottom-color: transparent;
+}
+
+.ni-recent__row:hover {
+  background: var(--inp);
+}
+
+.ni-recent__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ni-recent__name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-recent__app {
+  font-size: 11.5px;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-recent__ago {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}

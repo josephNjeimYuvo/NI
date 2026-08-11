@@ -1,0 +1,268 @@
+/**
+ * Design tokens.
+ *
+ * Every colour in the app resolves through these variables. Appearance is
+ * driven by two independent root attributes:
+ *
+ *   data-theme="light" | "dark"     — appearance
+ *   data-brand="blue" | "orange" | "red" — brand palette
+ *
+ * Brand blocks override the subset of tokens that carry brand identity;
+ * anything they omit falls through to the base definitions below.
+ */
+
+:root {
+  /* Core brand ramp */
+  --navy: #06345a;
+  --navy2: #0a426f;
+  --cyan: #5ba6d8;
+  --cyan2: #2e6fa0;
+  --blue: #3b82f6;
+
+  /* Surfaces */
+  --pg: #f9fafb;
+  --pgb: #f1f4f8;
+  --card: #ffffff;
+  --bd: #e5e7eb;
+  --bds: #e8ebf0;
+  --inp: #f8fafc;
+  --spanel: rgba(255, 255, 255, 0.92);
+  --ovl: rgba(6, 52, 90, 0.42);
+  --g1: rgba(255, 255, 255, 0.96);
+  --g2: rgba(255, 255, 255, 0.78);
+
+  /* Text */
+  --txt: #111827;
+  --mut: #6b7280;
+  --dim: #6e7787;
+  --head: #1e3a8a;
+  --pri: #1e3a8a;
+  --sec: #3b4657;
+
+  /* Interaction */
+  --hov: rgba(30, 58, 138, 0.055);
+  --tint: rgba(30, 58, 138, 0.09);
+  --focus: rgba(154, 198, 230, 0.8);
+
+  /* Accents */
+  --acc1: #1e3a8a;
+  --acc2: #8aa6d8;
+  --acc3: #5ba6d8;
+  --ondk: #9ac6e6;
+
+  /* Elevation */
+  --sh: 0 1px 2px rgba(15, 23, 42, 0.05), 0 10px 30px rgba(15, 23, 42, 0.07);
+  --shx: 0 24px 60px rgba(6, 52, 90, 0.22);
+  --glow1: rgba(91, 166, 216, 0.2);
+  --glow2: rgba(59, 130, 246, 0.16);
+
+  /* Buttons */
+  --btnA: rgba(46, 111, 160, 0.95);
+  --btnB: rgba(59, 130, 246, 0.95);
+
+  /* Raw channel values, for rgba() composition at varying alpha */
+  --bRGB: 46, 111, 160;
+  --brRGB: 59, 130, 246;
+  --pRGB: 30, 58, 138;
+  --critRGB: 220, 38, 38;
+
+  --crit: #dc2626;
+
+  /* Login backdrop gradient stops */
+  --navyB: #04223c;
+  --navyC: #031a2f;
+
+  --logo: #06345a;
+  --sel: #06345a;
+  --onsel: #ffffff;
+}
+
+[data-theme='dark'] {
+  --pg: #0b111e;
+  --pgb: #0b111e;
+  --card: #151d2e;
+  --bd: #28324a;
+  --bds: #28324a;
+  --txt: #e7ebf3;
+  --mut: #94a3b8;
+  --cyan: #9ac6e6;
+  --cyan2: #5ba6d8;
+
+  --hov: rgba(154, 198, 230, 0.07);
+  --inp: #0b1b33;
+  --ovl: rgba(4, 10, 20, 0.62);
+
+  --sh: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shx: 0 24px 60px rgba(0, 0, 0, 0.55);
+
+  --spanel: rgba(20, 28, 44, 0.96);
+  --dim: #93a0b4;
+  --g1: rgba(21, 29, 46, 0.96);
+  --g2: rgba(21, 29, 46, 0.82);
+
+  --head: #e7ebf3;
+  --pri: #9ac6e6;
+  --sec: #c4cede;
+  --tint: rgba(154, 198, 230, 0.1);
+  --acc1: #a8c6ec;
+  --acc2: #4e6fa6;
+  --acc3: #5ba6d8;
+  --logo: #e7ebf3;
+}
+
+/* ---------------------------------------------------------------- orange -- */
+
+[data-brand='orange'] {
+  --navy: #1a1713;
+  --navy2: #2a231c;
+  --cyan: #ff9a3d;
+  --cyan2: #e06a00;
+  --blue: #ff7900;
+
+  --pg: #fdfaf7;
+  --pgb: #f3eee8;
+  --hov: rgba(255, 121, 0, 0.07);
+  --ovl: rgba(26, 23, 19, 0.46);
+  --shx: 0 24px 60px rgba(60, 34, 10, 0.2);
+
+  --head: #cc5f00;
+  --pri: #cc5f00;
+  --tint: rgba(255, 121, 0, 0.13);
+  --acc1: #cc5f00;
+  --acc2: #f2b481;
+  --acc3: #ff9a3d;
+
+  --focus: rgba(255, 154, 61, 0.85);
+  --glow1: rgba(255, 154, 61, 0.24);
+  --glow2: rgba(255, 121, 0, 0.2);
+  --ondk: #ffc08a;
+
+  --btnA: rgba(224, 106, 0, 0.96);
+  --btnB: rgba(255, 121, 0, 0.96);
+
+  --bRGB: 224, 106, 0;
+  --brRGB: 255, 121, 0;
+  --pRGB: 204, 95, 0;
+  --bds: #ede6df;
+
+  --navyB: #2a231c;
+  --navyC: #0e0c0a;
+  --logo: #ff7900;
+  --sel: #e06a00;
+  --onsel: #ffffff;
+}
+
+[data-brand='orange'][data-theme='dark'] {
+  --pg: #131110;
+  --pgb: #131110;
+  --card: #1e1b18;
+  --bd: #363028;
+  --bds: #363028;
+  --txt: #f4ede6;
+  --mut: #a99b8c;
+
+  --cyan: #ffb273;
+  --cyan2: #ff9a3d;
+  --hov: rgba(255, 154, 61, 0.08);
+  --inp: #191512;
+  --ovl: rgba(12, 9, 7, 0.64);
+
+  --spanel: rgba(30, 27, 24, 0.96);
+  --dim: #a99b8c;
+  --g1: rgba(30, 27, 24, 0.96);
+  --g2: rgba(30, 27, 24, 0.82);
+
+  --head: #f4ede6;
+  --pri: #ffb273;
+  --sec: #dccfc2;
+  --tint: rgba(255, 121, 0, 0.15);
+  --acc1: #ffa24d;
+  --acc2: #8a5a2c;
+  --acc3: #ff9a3d;
+
+  --ondk: #ffc08a;
+  --logo: #ff9a3d;
+  --sel: #ff7900;
+  --onsel: #1a1713;
+}
+
+/* ------------------------------------------------------------------- red -- */
+
+[data-brand='red'] {
+  --navy: #4a0a10;
+  --navy2: #6b0e16;
+  --cyan: #f2707b;
+  --cyan2: #b3151f;
+  --blue: #e41e2c;
+
+  --pg: #fdf8f8;
+  --pgb: #f5eaeb;
+  --hov: rgba(228, 30, 44, 0.055);
+  --ovl: rgba(60, 8, 12, 0.42);
+  --shx: 0 24px 60px rgba(60, 8, 12, 0.22);
+
+  --head: #a81420;
+  --pri: #a81420;
+  --tint: rgba(228, 30, 44, 0.1);
+  --acc1: #a81420;
+  --acc2: #e0a0a6;
+  --acc3: #e44a55;
+
+  --focus: rgba(242, 112, 123, 0.8);
+  --glow1: rgba(242, 112, 123, 0.22);
+  --glow2: rgba(228, 30, 44, 0.16);
+  --ondk: #f7aeb4;
+
+  --btnA: rgba(179, 21, 31, 0.95);
+  --btnB: rgba(228, 30, 44, 0.95);
+
+  --bRGB: 179, 21, 31;
+  --brRGB: 228, 30, 44;
+  --pRGB: 168, 20, 32;
+  --bds: #efdcde;
+
+  --navyB: #6b0e16;
+  --navyC: #380509;
+  --logo: #a81420;
+  --sel: #c2101d;
+  --onsel: #ffffff;
+
+  --crit: #7f1020;
+  --critRGB: 127, 16, 32;
+}
+
+[data-brand='red'][data-theme='dark'] {
+  --pg: #140c0d;
+  --pgb: #140c0d;
+  --card: #211516;
+  --bd: #3b2527;
+  --bds: #3b2527;
+  --txt: #f6eaeb;
+  --mut: #b79a9d;
+
+  --cyan: #f7aeb4;
+  --cyan2: #f2707b;
+  --hov: rgba(247, 174, 180, 0.07);
+  --inp: #1c1011;
+  --ovl: rgba(10, 4, 5, 0.62);
+
+  --spanel: rgba(33, 21, 22, 0.96);
+  --dim: #b79a9d;
+  --g1: rgba(33, 21, 22, 0.96);
+  --g2: rgba(33, 21, 22, 0.82);
+
+  --head: #f6eaeb;
+  --pri: #f7aeb4;
+  --sec: #ddc5c7;
+  --tint: rgba(247, 174, 180, 0.1);
+  --acc1: #f79aa2;
+  --acc2: #8a3038;
+  --acc3: #f2707b;
+
+  --ondk: #f7aeb4;
+  --crit: #b5303f;
+  --critRGB: 181, 48, 63;
+  --logo: #f6eaeb;
+  --sel: #e41e2c;
+  --onsel: #ffffff;
+}
