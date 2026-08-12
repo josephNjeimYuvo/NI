@@ -86,10 +86,9 @@
   background: var(--sel);
   border-color: var(--sel);
   color: var(--onsel);
-  /* Restate the pair against the filled tile: the structure takes the tile's
-     foreground, and the accent stays bright so the two-tone survives. */
+  /* The structure takes the tile's foreground so it reads against the fill.
+     The accent is left alone — it is already bright enough to carry here. */
   --icon-primary: var(--onsel);
-  --icon-accent: var(--cyan);
 }
 
 .ni-tile__label {

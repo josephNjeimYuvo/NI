@@ -151,15 +151,15 @@ export const MODULE_ICON = 'file'
  * result for the ones drawn as a single path.
  */
 const ICON_ACCENT_PATHS: Partial<Record<IconKey, readonly number[]>> = {
-  ran: [3, 4], // outer signal arcs
+  ran: [1, 2, 3, 4], // every signal arc; only the emitter stays primary
   core: [1, 3], // alternating bars
   fault: [1, 2], // the exclamation inside the triangle
-  data: [0], // top face of the cylinder
-  netopt: [4, 5], // slider knobs
-  dash: [3], // chart line on the screen
-  site: [3, 4], // the join marker
+  data: [0, 1], // top face and upper band of the cylinder
+  netopt: [1, 3, 4, 5], // slider knobs and the track beyond each one
+  dash: [2, 3], // the stand and the chart line
+  site: [1, 2, 3, 4], // satellite blocks and the join marker
   exec: [1], // trend line over the axes
-  auto: [3, 4], // the two nodes
+  auto: [2, 3, 4], // both nodes and the branch they feed
   admin: [0], // hub of the gear
   file: [1], // folded corner of the module mark
 }

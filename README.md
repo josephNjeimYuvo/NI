@@ -116,6 +116,14 @@ of an antenna, the knobs of a slider, the trend line over its axes. No
 positional rule lands on those consistently, so it is a drawing decision
 rather than a formula.
 
+The primary follows the brand but the accent is one cyan everywhere,
+including dark mode. Each brand's own accent shade sits in the same hue
+family as its primary — orange on orange, red on red — which leaves the two
+tones nearly indistinguishable at icon sizes; a single contrasting hue keeps
+the split readable in all three. Being decorative rather than load-bearing,
+it is tuned for visibility over contrast ratio: the primary carries the
+structure, so an icon still reads if the accent is missed entirely.
+
 Both tones are CSS variables rather than props, so a container can restate
 the pair for its own background: a selected application tile sets
 `--icon-primary` to its foreground colour, and the icon follows without
