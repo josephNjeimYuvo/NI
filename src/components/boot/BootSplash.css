@@ -1,0 +1,72 @@
+/**
+ * Post-sign-in splash. It reuses the login screen's gradient and wash so the
+ * handover from sign-in reads as one continuous surface, then gives way to
+ * the app.
+ */
+
+.ni-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--navy) 0%, var(--navyB) 55%, var(--navyC) 100%);
+  animation: niFade 0.2s ease;
+}
+
+.ni-boot__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 45% at 28% 46%, var(--glow1), transparent 72%),
+    radial-gradient(45% 40% at 88% 88%, var(--glow2), transparent 70%);
+  pointer-events: none;
+}
+
+.ni-boot__logo {
+  position: relative;
+  color: #fff;
+  display: flex;
+  animation: niBreath 3.6s ease-in-out infinite;
+}
+
+.ni-boot__status {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ni-boot__track {
+  width: 220px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.ni-boot__bar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cyan2), var(--cyan));
+  transition: width 0.14s linear;
+}
+
+.ni-boot__status-text {
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  color: rgba(226, 232, 240, 0.68);
+}
+
+.ni-boot__build {
+  position: absolute;
+  bottom: 28px;
+  font-size: 11px;
+  color: rgba(226, 232, 240, 0.34);
+  letter-spacing: 0.04em;
+}

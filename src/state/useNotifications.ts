@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { services } from '@/services'
 import type { AppNotification, NotificationCategory } from '@/types'
 
@@ -19,22 +19,31 @@ export interface NotificationsState {
   close: () => void
   markAllRead: () => void
   dismiss: (id: number) => void
+  /** Fetches the inbox. Driven by the boot sequence, after sign-in. */
+  load: () => Promise<void>
+  /** Drops everything, for sign-out. */
+  clear: () => void
 }
 
-/** The notification inbox and its slide-over panel. */
+/**
+ * The notification inbox and its slide-over panel.
+ *
+ * Loading is explicit rather than on mount: notifications are user data, so
+ * nothing is fetched until there is a signed-in user to fetch them for.
+ */
 export function useNotifications(): NotificationsState {
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [filter, setFilter] = useState<NotificationFilter>('All')
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    let active = true
-    void services.notifications.list().then((loaded) => {
-      if (active) setNotifications(loaded)
-    })
-    return () => {
-      active = false
-    }
+  const load = useCallback(async () => {
+    setNotifications(await services.notifications.list())
+  }, [])
+
+  const clear = useCallback(() => {
+    setNotifications([])
+    setFilter('All')
+    setOpen(false)
   }, [])
 
   const toggle = useCallback(() => setOpen((current) => !current), [])
@@ -64,5 +73,7 @@ export function useNotifications(): NotificationsState {
     close,
     markAllRead,
     dismiss,
+    load,
+    clear,
   }
 }

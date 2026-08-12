@@ -25,6 +25,8 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
 
 - **Sign-in** with an interactive node-graph backdrop — drag to orbit,
   shift-drag to pan, wheel to zoom, double-click to reset.
+- **Boot splash** between sign-in and the landing screen, covering the
+  warm-up that needs an authenticated user.
 - **Navigation** as either a 284px sidebar or a 66px rail with flyouts,
   covering 11 applications, their vendor groupings and ~50 modules.
 - **Tabs** for open modules, capped at four visible with an overflow count.
@@ -51,10 +53,19 @@ src/
 **State.** The prototype held everything in one class component with about
 thirty fields. That is now one hook per concern — `useSession`, `useTabs`,
 `useNavigation`, `useNotifications`, `usePalette`, `useModuleWorkspace`,
-`usePreferences`, `useToast` — each owning its own slice.
+`usePreferences`, `useToast`, `useBootSequence` — each owning its own slice.
 `AppStateProvider` composes them and owns only the interactions that cross
 slices, such as opening a module (which touches tabs, history, overlays and
 the workspace at once).
+
+**Startup.** `useBootSequence` runs the warm-up between sign-in and the
+landing screen, and `App` renders the splash for every authenticated state
+that is not yet `ready` — so the shell cannot appear before its data has
+landed. Boot tasks are supplied by the provider; today that is the
+notification fetch, which needs a signed-in user and therefore cannot happen
+any earlier. The sequence finishes when both the tasks and a minimum
+duration are done, so real backend latency lengthens the splash rather than
+being hidden behind it.
 
 **Styling.** Every colour resolves through the custom properties in
 `styles/tokens.css`. Appearance is set by two independent attributes on the

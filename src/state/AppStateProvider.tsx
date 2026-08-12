@@ -32,6 +32,7 @@ import { useNotifications, type NotificationsState } from './useNotifications'
 import { usePalette, type PaletteState } from './usePalette'
 import { useModuleWorkspace, type ModuleWorkspaceState } from './useModuleWorkspace'
 import { useToast, type ToastState } from './useToast'
+import { useBootSequence, type BootSequenceState, type BootTask } from './useBootSequence'
 
 /** Which list the activity slide-over is showing. */
 export type ActivityMode = 'recent' | 'favorites'
@@ -49,6 +50,7 @@ export interface AppState {
   palette: PaletteState
   workspace: ModuleWorkspaceState
   toast: ToastState
+  boot: BootSequenceState
 
   /** Applications visible under the current catalog mode. */
   applications: Application[]
@@ -113,6 +115,15 @@ export function AppStateProvider({
   const palette = usePalette()
   const workspace = useModuleWorkspace()
   const toast = useToast()
+
+  const { load: loadNotifications, clear: clearNotifications } = notifications
+
+  /**
+   * Warm-up run between sign-in and the landing screen. These are the fetches
+   * that need a signed-in user, so they cannot happen any earlier.
+   */
+  const bootTasks = useMemo<BootTask[]>(() => [loadNotifications], [loadNotifications])
+  const boot = useBootSequence(bootTasks)
 
   const [activityOpen, setActivityOpen] = useState(false)
   const [activityMode, setActivityMode] = useState<ActivityMode>('recent')
@@ -179,15 +190,17 @@ export function AppStateProvider({
 
   const signIn = useCallback(
     async (credentials: Credentials) => {
-      await session.signIn(credentials)
+      if (await session.signIn(credentials)) boot.start()
     },
-    [session],
+    [session, boot],
   )
 
   const signOut = useCallback(() => {
     session.signOut()
     tabs.closeAll()
-  }, [session, tabs])
+    clearNotifications()
+    boot.reset()
+  }, [session, tabs, clearNotifications, boot])
 
   const togglePin = useCallback(
     (name: string) => {
@@ -276,6 +289,7 @@ export function AppStateProvider({
     palette,
     workspace,
     toast,
+    boot,
     applications,
     selectedApplication,
     searchResults,
