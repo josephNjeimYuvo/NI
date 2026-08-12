@@ -1,4 +1,4 @@
-import { Icon, IconBold } from '@/lib/icons'
+import { DuoIcon, Icon, MODULE_ICON } from '@/lib/icons'
 import type { NavigationVendor } from '@/types'
 import { useAppState } from '@/state/AppStateProvider'
 
@@ -30,13 +30,9 @@ export function ModuleLeaf({ name, variant = 'sidebar' }: LeafProps) {
         .join(' ')}
       onClick={() => openModule(name)}
     >
-      {variant === 'flyout' ? (
-        <span className="ni-leaf__icon">
-          <IconBold name="react" size={14} />
-        </span>
-      ) : (
-        <span className="ni-leaf__dot" />
-      )}
+      <span className="ni-leaf__icon">
+        <DuoIcon name={MODULE_ICON} size={14} />
+      </span>
       <span className="ni-leaf__label">{name}</span>
     </button>
   )

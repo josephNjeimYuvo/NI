@@ -78,10 +78,18 @@
   box-shadow: 0 12px 28px rgba(var(--bRGB), 0.16);
 }
 
+.ni-tile__icon {
+  display: flex;
+}
+
 .ni-tile--selected {
   background: var(--sel);
   border-color: var(--sel);
   color: var(--onsel);
+  /* Restate the pair against the filled tile: the structure takes the tile's
+     foreground, and the accent stays bright so the two-tone survives. */
+  --icon-primary: var(--onsel);
+  --icon-accent: var(--cyan);
 }
 
 .ni-tile__label {
@@ -213,6 +221,10 @@
 }
 
 .ni-card__child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
   text-align: left;
   padding: 9px 10px;
   border: none;

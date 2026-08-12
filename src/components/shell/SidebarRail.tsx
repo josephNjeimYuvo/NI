@@ -77,7 +77,6 @@ export function SidebarRail() {
             type="button"
             className="ni-rail__button"
             title={app.label}
-            style={{ color: 'var(--acc1)' }}
             onClick={(event) => {
               navigation.selectApp(app.id)
               navigation.toggleFlyout(app.id, event.currentTarget.getBoundingClientRect().top)

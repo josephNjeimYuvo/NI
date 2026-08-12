@@ -7,8 +7,8 @@
  * Three renderers share the table:
  *   <Icon>     — uniform stroke, the default
  *   <IconBold> — slightly heavier stroke, for larger sizes
- *   <DuoIcon>  — tints the 2nd and 3rd paths with accent tokens, giving
- *                catalog icons a two-tone treatment
+ *   <DuoIcon>  — two-tone, for anything representing an application, module
+ *                or submodule
  */
 
 export const ICON_PATHS = {
@@ -51,6 +51,12 @@ export const ICON_PATHS = {
     'M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.2A1.6 1.6 0 0 0 7.5 19l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.2A1.6 1.6 0 0 0 4.9 7.5l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.4.9z',
   ],
   react: ['M3 18l5-7 4 4 4-6 5 6'],
+
+  /** Stands in for a module or submodule, which have no mark of their own. */
+  file: [
+    'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z',
+    'M14 2v6h6',
+  ],
 
   // Chevrons and arrows
   chevD: ['M6 9l6 6 6-6'],
@@ -131,6 +137,33 @@ export const ICON_PATHS = {
 
 export type IconKey = keyof typeof ICON_PATHS
 
+/** The icon standing in for a module or submodule anywhere one is listed. */
+export const MODULE_ICON = 'file'
+
+/**
+ * Which paths of each icon are drawn in the accent tone; the rest take the
+ * primary. Chosen per icon rather than by a positional rule, because the
+ * split that reads well is a drawing decision — the signal arcs of an
+ * antenna, the knobs of a slider, the trend line over its axes — and no
+ * index formula lands on those consistently.
+ *
+ * Icons absent from this table render in a single tone, which is the right
+ * result for the ones drawn as a single path.
+ */
+const ICON_ACCENT_PATHS: Partial<Record<IconKey, readonly number[]>> = {
+  ran: [3, 4], // outer signal arcs
+  core: [1, 3], // alternating bars
+  fault: [1, 2], // the exclamation inside the triangle
+  data: [0], // top face of the cylinder
+  netopt: [4, 5], // slider knobs
+  dash: [3], // chart line on the screen
+  site: [3, 4], // the join marker
+  exec: [1], // trend line over the axes
+  auto: [3, 4], // the two nodes
+  admin: [0], // hub of the gear
+  file: [1], // folded corner of the module mark
+}
+
 function pathsFor(name: string): readonly string[] {
   return ICON_PATHS[name as IconKey] ?? ICON_PATHS.react
 }
@@ -170,19 +203,23 @@ export function IconBold({ name, size = 18 }: Omit<IconProps, 'weight'>) {
 }
 
 /**
- * Two-tone icon. The leading path keeps `currentColor` while the following
- * two pick up the accent tokens, which gives catalog icons depth without
- * needing a second asset per icon.
+ * Two-tone icon, used wherever an application, module or submodule is
+ * represented — so the same thing carries the same treatment in the catalog,
+ * the sidebar, Quick Access, Recent and the command palette.
+ *
+ * Colour comes from `--icon-primary` and `--icon-accent` rather than props,
+ * so a container can restate the pair to suit its own background. A tile
+ * with a dark fill sets the primary to its foreground colour and the icon
+ * follows, without this component knowing anything about tiles.
  */
 export function DuoIcon({ name, size = 18, weight = 1.7 }: IconProps) {
-  const accents = ['currentColor', 'var(--acc2)', 'var(--acc3)']
+  const accentPaths = ICON_ACCENT_PATHS[name as IconKey] ?? []
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
       strokeWidth={weight}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -190,7 +227,15 @@ export function DuoIcon({ name, size = 18, weight = 1.7 }: IconProps) {
       focusable="false"
     >
       {pathsFor(name).map((d, i) => (
-        <path key={i} d={d} stroke={accents[i] ?? 'var(--acc3)'} />
+        <path
+          key={i}
+          d={d}
+          stroke={
+            accentPaths.includes(i)
+              ? 'var(--icon-accent, currentColor)'
+              : 'var(--icon-primary, currentColor)'
+          }
+        />
       ))}
     </svg>
   )

@@ -1,4 +1,4 @@
-import { DuoIcon, Icon } from '@/lib/icons'
+import { DuoIcon, Icon, MODULE_ICON } from '@/lib/icons'
 import { useAppState } from '@/state/AppStateProvider'
 import { QuickAccess } from './QuickAccess'
 import { RecentModules } from './RecentModules'
@@ -53,13 +53,8 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
                     className={`ni-tile${selected ? ' ni-tile--selected' : ''}`}
                     onClick={() => selectApplication(app.id)}
                   >
-                    <span
-                      style={{
-                        color: selected ? 'var(--onsel)' : 'var(--acc1)',
-                        display: 'flex',
-                      }}
-                    >
-                      <Icon name={app.icon} size={26} />
+                    <span className="ni-tile__icon">
+                      <DuoIcon name={app.icon} size={26} />
                     </span>
                     <span className="ni-tile__label">{app.label}</span>
                   </button>
@@ -72,7 +67,7 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
         {/* Keyed on the application so switching replays the entrance. */}
         <div key={selectedApplication.id} style={{ animation: 'niUp .26s ease' }}>
           <div className="ni-home__heading">
-            <span style={{ color: 'var(--acc1)', display: 'flex' }}>
+            <span className="ni-ico">
               <DuoIcon name={selectedApplication.icon} size={18} />
             </span>
             <span className="ni-home__headingText">{selectedApplication.label}</span>
@@ -144,6 +139,9 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
                               className="ni-card__child"
                               onClick={() => openModule(child)}
                             >
+                              <span className="ni-ico">
+                                <DuoIcon name={MODULE_ICON} size={15} />
+                              </span>
                               {child}
                             </button>
                           ))}

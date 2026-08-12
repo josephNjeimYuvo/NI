@@ -134,7 +134,7 @@ export function Sidebar() {
                 aria-expanded={open}
               >
                 <span className={`ni-cat__bar${active ? ' ni-cat__bar--on' : ''}`} />
-                <span className="ni-cat__icon" style={{ color: 'var(--acc1)' }}>
+                <span className="ni-cat__icon">
                   <DuoIcon name={app.icon} size={18} />
                 </span>
                 <span className="ni-cat__label">{app.label}</span>

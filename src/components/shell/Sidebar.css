@@ -316,12 +316,9 @@
   color: var(--pri);
 }
 
-.ni-leaf__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.5;
+/* Modules and submodules carry the same two-tone mark wherever they appear. */
+.ni-leaf__icon {
+  display: flex;
   flex-shrink: 0;
 }
 
@@ -565,14 +562,8 @@
   gap: 1px;
 }
 
-/* Flyout leaves use an icon rather than a bullet, and are a touch taller. */
+/* Flyout leaves sit a touch taller than their sidebar counterparts. */
 .ni-leaf--flyout {
   height: 31px;
   padding: 0 8px;
-}
-
-.ni-leaf__icon {
-  display: flex;
-  opacity: 0.65;
-  flex-shrink: 0;
 }

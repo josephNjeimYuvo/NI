@@ -108,6 +108,19 @@ document element, so one paint re-themes the whole app:
 <html data-theme="light|dark" data-brand="blue|orange|red">
 ```
 
+**Icons.** Anything standing for an application, module or submodule renders
+through `DuoIcon`, which draws in two tones: `--icon-primary` carries the
+structure and `--icon-accent` picks out one part of the drawing. Which paths
+take the accent is declared per icon in `ICON_ACCENT_PATHS` — the signal arcs
+of an antenna, the knobs of a slider, the trend line over its axes. No
+positional rule lands on those consistently, so it is a drawing decision
+rather than a formula.
+
+Both tones are CSS variables rather than props, so a container can restate
+the pair for its own background: a selected application tile sets
+`--icon-primary` to its foreground colour, and the icon follows without
+`DuoIcon` knowing tiles exist.
+
 **Data.** Nothing in `components/` or `state/` imports a fixture directly.
 Everything goes through the interfaces in `services/contracts.ts`:
 `AuthService`, `CatalogService`, `NotificationService`, `ModuleService`.
