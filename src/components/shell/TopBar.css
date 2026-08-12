@@ -8,16 +8,39 @@
   background: var(--card);
   border-bottom: 1px solid var(--bd);
   box-shadow: var(--sh);
-  z-index: 20;
+  /**
+   * Above the sidebar (30) and below the rail flyout (44).
+   *
+   * This bar is a flex item, and flex items honour z-index even when
+   * statically positioned — so this value creates a stacking context that
+   * every descendant is confined to. The tab overflow menu and its
+   * click-away scrim live in here, and at a lower value they would be
+   * trapped beneath the sidebar: the scrim would stop covering it, and
+   * clicks meant to dismiss the menu would land on nav items instead.
+   * The two never overlap geometrically, so nothing is obscured by this.
+   */
+  z-index: 40;
 }
 
+/* Wrapper: arrows and the overflow menu sit outside the scrolling track. */
 .ni-topbar__tabs {
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+/* The track holds every open tab and scrolls horizontally within whatever
+   width the top bar has left, so how many fit follows the viewport. */
+.ni-topbar__track {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
   gap: 2px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .ni-tab {
@@ -35,6 +58,8 @@
   font-size: 12.5px;
   font-weight: 500;
   max-width: 190px;
+  /* Tabs keep their width; the track scrolls instead of squeezing them. */
+  flex-shrink: 0;
   transition: background 0.18s ease;
 }
 
@@ -71,19 +96,170 @@
   background: var(--hov);
 }
 
-.ni-topbar__overflow {
+/* Scroll arrows, shown only once the track actually overflows. */
+.ni-tabnav {
+  width: 26px;
   height: 26px;
-  padding: 0 10px;
+  flex-shrink: 0;
+  border: 1px solid var(--bd);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.ni-tabnav:hover:not(:disabled) {
+  background: var(--hov);
+  color: var(--cyan2);
+}
+
+/* Kept in place rather than hidden at the ends, so the strip does not
+   reflow every time you reach one edge. */
+.ni-tabnav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* --------------------------------------------------------- overflow menu -- */
+
+.ni-tabmenu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ni-tabmenu__trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px 0 10px;
   border-radius: 13px;
   background: var(--hov);
   border: 1px solid var(--bd);
   color: var(--mut);
   font-size: 11.5px;
   font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.ni-tabmenu__trigger:hover {
+  border-color: var(--cyan2);
+  color: var(--cyan2);
+}
+
+.ni-tabmenu__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+}
+
+.ni-tabmenu__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 45;
+  width: 268px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  background: var(--spanel);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
+  animation: niPopDown 0.16s ease;
+}
+
+@keyframes niPopDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ni-tabmenu__heading {
+  padding: 6px 8px 8px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.ni-tabmenu__item {
   display: flex;
   align-items: center;
-  cursor: default;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 9px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--txt);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.ni-tabmenu__item:hover {
+  background: var(--hov);
+}
+
+.ni-tabmenu__item--active {
+  background: var(--tint);
+}
+
+.ni-tabmenu__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ni-tabmenu__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-tabmenu__item--active .ni-tabmenu__label {
+  color: var(--pri);
+}
+
+.ni-tabmenu__app {
+  font-size: 11px;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Marks a tab that is scrolled out of the track right now. */
+.ni-tabmenu__offscreen {
+  width: 5px;
+  height: 5px;
   flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--mut);
+  opacity: 0.5;
 }
 
 /* Search affordance that opens the command palette. */
@@ -120,6 +296,26 @@
   border-radius: 5px;
   border: 1px solid var(--bd);
   background: var(--card);
+}
+
+/**
+ * Below this width the search box's 230px, the action buttons and the tab
+ * scroll controls together leave the tab track with no room at all — the
+ * strip collapses and no tabs are reachable. Search falls back to its icon,
+ * which returns ~190px to the tabs. The shortcut hint goes with it; the
+ * shortcut still works.
+ */
+@media (max-width: 1180px) {
+  .ni-topbar__search {
+    width: 34px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .ni-topbar__searchLabel,
+  .ni-topbar__kbd {
+    display: none;
+  }
 }
 
 .ni-topbar__actions {

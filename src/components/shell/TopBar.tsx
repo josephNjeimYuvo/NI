@@ -1,60 +1,21 @@
 import { Icon } from '@/lib/icons'
 import { DEFAULT_USER } from '@/data/session'
 import { useAppState } from '@/state/AppStateProvider'
+import { TabStrip } from './TabStrip'
 import './TopBar.css'
-
-/** Tabs shown in the strip before the rest collapse into an overflow chip. */
-const MAX_VISIBLE_TABS = 4
 
 /**
  * Top bar: open tabs on the left, search in the middle, and the account and
  * appearance controls on the right.
  */
 export function TopBar() {
-  const { tabs, palette, preferences, notifications, signOut } = useAppState()
+  const { palette, preferences, notifications, signOut } = useAppState()
 
-  const visible = tabs.tabs.slice(-MAX_VISIBLE_TABS)
-  const hidden = tabs.tabs.length - visible.length
   const dark = preferences.theme === 'dark'
 
   return (
     <div className="ni-topbar">
-      <div className="ni-topbar__tabs">
-        {visible.map((tab) => {
-          const active = tab.id === tabs.activeTabId
-          return (
-            <div
-              key={tab.id}
-              className={`ni-tab${active ? ' ni-tab--active' : ''}`}
-              onClick={() => tabs.selectTab(tab.id)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') tabs.selectTab(tab.id)
-              }}
-            >
-              <span className="ni-tab__label">{tab.label}</span>
-              <button
-                type="button"
-                className="ni-tab__close"
-                title="Close tab"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  tabs.closeTab(tab.id)
-                }}
-              >
-                <Icon name="x" size={13} />
-              </button>
-            </div>
-          )
-        })}
-
-        {hidden > 0 && (
-          <div className="ni-topbar__overflow" title={`${hidden} more open modules`}>
-            +{hidden}
-          </div>
-        )}
-      </div>
+      <TabStrip />
 
       <button type="button" className="ni-topbar__search" onClick={palette.openPalette}>
         <Icon name="search" size={16} />

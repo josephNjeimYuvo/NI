@@ -29,7 +29,8 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
   landing screen, one between signing out and the login screen.
 - **Navigation** as either a 284px sidebar or a 66px rail with flyouts,
   covering 11 applications, their vendor groupings and ~50 modules.
-- **Tabs** for open modules, capped at four visible with an overflow count.
+- **Tabs** for open modules in a strip that fits the available width, with
+  arrows to scroll through them and a dropdown listing every open module.
 - **Command palette** (`⌘K` / `Ctrl+K`) searching applications, modules and
   submodules, with arrow-key navigation.
 - **Module workspace** with filters, KPI tiles and a parameter-audit grid,
@@ -84,6 +85,20 @@ has already left.
 authentication, because teardown clears the session partway through and the
 login screen would otherwise appear mid-splash; and the shell renders only
 at `ready`, so it cannot appear before its data has landed.
+
+**Tab strip.** `TabStrip` renders every open tab into a horizontally
+scrolling track that fills whatever width the top bar has left, so how many
+are on screen follows the viewport instead of a fixed cap. Arrows appear
+only once the track overflows and scroll it — they never change the active
+module, so hunting for a tab costs nothing. Opening a module from elsewhere
+scrolls its tab into view, and the overflow chip opens a menu of every tab
+for jumping straight to one that is far off-screen.
+
+Below 1180px the search box collapses to its icon. Without that, the search
+field, action buttons and scroll controls together leave the track with no
+room at all and no tab is reachable. At 800px with the sidebar *expanded*
+the track is still too narrow for a full tab — collapsing the sidebar, or
+the overflow menu, covers that case.
 
 **Styling.** Every colour resolves through the custom properties in
 `styles/tokens.css`. Appearance is set by two independent attributes on the
