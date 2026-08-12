@@ -12,7 +12,8 @@ export interface SessionState {
   /** Message from the last failed sign-in, cleared as soon as input changes. */
   error: string | null
   signIn: (credentials: Credentials) => Promise<boolean>
-  signOut: () => void
+  /** Revokes the session server-side, then drops it locally. */
+  signOut: () => Promise<void>
   clearError: () => void
 
   favorites: string[]
@@ -47,8 +48,8 @@ export function useSession(): SessionState {
     }
   }, [])
 
-  const signOut = useCallback(() => {
-    void services.auth.signOut()
+  const signOut = useCallback(async () => {
+    await services.auth.signOut()
     setSession(null)
   }, [])
 

@@ -32,7 +32,11 @@ import { useNotifications, type NotificationsState } from './useNotifications'
 import { usePalette, type PaletteState } from './usePalette'
 import { useModuleWorkspace, type ModuleWorkspaceState } from './useModuleWorkspace'
 import { useToast, type ToastState } from './useToast'
-import { useBootSequence, type BootSequenceState, type BootTask } from './useBootSequence'
+import {
+  useSessionTransition,
+  type SessionTransitionState,
+  type TransitionTask,
+} from './useSessionTransition'
 
 /** Which list the activity slide-over is showing. */
 export type ActivityMode = 'recent' | 'favorites'
@@ -50,7 +54,7 @@ export interface AppState {
   palette: PaletteState
   workspace: ModuleWorkspaceState
   toast: ToastState
-  boot: BootSequenceState
+  transition: SessionTransitionState
 
   /** Applications visible under the current catalog mode. */
   applications: Application[]
@@ -117,13 +121,31 @@ export function AppStateProvider({
   const toast = useToast()
 
   const { load: loadNotifications, clear: clearNotifications } = notifications
+  const { signOut: endSession } = session
+  const { closeAll: closeAllTabs } = tabs
 
   /**
    * Warm-up run between sign-in and the landing screen. These are the fetches
    * that need a signed-in user, so they cannot happen any earlier.
    */
-  const bootTasks = useMemo<BootTask[]>(() => [loadNotifications], [loadNotifications])
-  const boot = useBootSequence(bootTasks)
+  const enterTasks = useMemo<TransitionTask[]>(() => [loadNotifications], [loadNotifications])
+
+  /**
+   * Teardown run while the sign-out splash is up: revoke the session, then
+   * drop everything belonging to it so nothing survives into the next one.
+   */
+  const leaveTasks = useMemo<TransitionTask[]>(
+    () => [
+      endSession,
+      async () => {
+        closeAllTabs()
+        clearNotifications()
+      },
+    ],
+    [endSession, closeAllTabs, clearNotifications],
+  )
+
+  const transition = useSessionTransition({ enter: enterTasks, leave: leaveTasks })
 
   const [activityOpen, setActivityOpen] = useState(false)
   const [activityMode, setActivityMode] = useState<ActivityMode>('recent')
@@ -190,17 +212,14 @@ export function AppStateProvider({
 
   const signIn = useCallback(
     async (credentials: Credentials) => {
-      if (await session.signIn(credentials)) boot.start()
+      if (await session.signIn(credentials)) transition.enter()
     },
-    [session, boot],
+    [session, transition],
   )
 
-  const signOut = useCallback(() => {
-    session.signOut()
-    tabs.closeAll()
-    clearNotifications()
-    boot.reset()
-  }, [session, tabs, clearNotifications, boot])
+  // The teardown itself is a leave task, so it happens behind the splash
+  // rather than before it.
+  const signOut = useCallback(() => transition.leave(), [transition])
 
   const togglePin = useCallback(
     (name: string) => {
@@ -289,7 +308,7 @@ export function AppStateProvider({
     palette,
     workspace,
     toast,
-    boot,
+    transition,
     applications,
     selectedApplication,
     searchResults,

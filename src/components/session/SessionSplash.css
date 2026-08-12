@@ -1,10 +1,10 @@
 /**
- * Post-sign-in splash. It reuses the login screen's gradient and wash so the
- * handover from sign-in reads as one continuous surface, then gives way to
- * the app.
+ * Splash shown either side of a session. It reuses the login screen's
+ * gradient and wash so the handover in both directions reads as one
+ * continuous surface rather than a cut.
  */
 
-.ni-boot {
+.ni-splashscreen {
   position: fixed;
   inset: 0;
   z-index: 90;
@@ -18,7 +18,7 @@
   animation: niFade 0.2s ease;
 }
 
-.ni-boot__wash {
+.ni-splashscreen__wash {
   position: absolute;
   inset: 0;
   background:
@@ -27,14 +27,14 @@
   pointer-events: none;
 }
 
-.ni-boot__logo {
+.ni-splashscreen__logo {
   position: relative;
   color: #fff;
   display: flex;
   animation: niBreath 3.6s ease-in-out infinite;
 }
 
-.ni-boot__status {
+.ni-splashscreen__status {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -42,7 +42,7 @@
   gap: 16px;
 }
 
-.ni-boot__track {
+.ni-splashscreen__track {
   width: 220px;
   height: 3px;
   border-radius: 2px;
@@ -50,20 +50,20 @@
   overflow: hidden;
 }
 
-.ni-boot__bar {
+.ni-splashscreen__bar {
   height: 100%;
   border-radius: 2px;
   background: linear-gradient(90deg, var(--cyan2), var(--cyan));
   transition: width 0.14s linear;
 }
 
-.ni-boot__status-text {
+.ni-splashscreen__text {
   font-size: 12.5px;
   letter-spacing: 0.01em;
   color: rgba(226, 232, 240, 0.68);
 }
 
-.ni-boot__build {
+.ni-splashscreen__build {
   position: absolute;
   bottom: 28px;
   font-size: 11px;

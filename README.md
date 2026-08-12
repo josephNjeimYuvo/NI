@@ -25,8 +25,8 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
 
 - **Sign-in** with an interactive node-graph backdrop — drag to orbit,
   shift-drag to pan, wheel to zoom, double-click to reset.
-- **Boot splash** between sign-in and the landing screen, covering the
-  warm-up that needs an authenticated user.
+- **Session splashes** either side of the app: one between sign-in and the
+  landing screen, one between signing out and the login screen.
 - **Navigation** as either a 284px sidebar or a 66px rail with flyouts,
   covering 11 applications, their vendor groupings and ~50 modules.
 - **Tabs** for open modules, capped at four visible with an overflow count.
@@ -53,19 +53,37 @@ src/
 **State.** The prototype held everything in one class component with about
 thirty fields. That is now one hook per concern — `useSession`, `useTabs`,
 `useNavigation`, `useNotifications`, `usePalette`, `useModuleWorkspace`,
-`usePreferences`, `useToast`, `useBootSequence` — each owning its own slice.
-`AppStateProvider` composes them and owns only the interactions that cross
-slices, such as opening a module (which touches tabs, history, overlays and
-the workspace at once).
+`usePreferences`, `useToast`, `useSessionTransition` — each owning its own
+slice. `AppStateProvider` composes them and owns only the interactions that
+cross slices, such as opening a module (which touches tabs, history,
+overlays and the workspace at once).
 
-**Startup.** `useBootSequence` runs the warm-up between sign-in and the
-landing screen, and `App` renders the splash for every authenticated state
-that is not yet `ready` — so the shell cannot appear before its data has
-landed. Boot tasks are supplied by the provider; today that is the
-notification fetch, which needs a signed-in user and therefore cannot happen
-any earlier. The sequence finishes when both the tasks and a minimum
-duration are done, so real backend latency lengthens the splash rather than
-being hidden behind it.
+**Session lifecycle.** `useSessionTransition` drives both splashes through
+one four-state machine:
+
+```
+idle ──enter()──▶ entering ──▶ ready ──leave()──▶ leaving ──▶ idle
+(login)           (splash)      (app)            (splash)     (login)
+```
+
+Both directions work the same way: run their tasks in order, and finish when
+both those tasks and a minimum duration are done — so real backend latency
+lengthens a splash rather than hiding behind it. The floor exists because
+the work is instant against fixtures, and a one-frame splash reads as a
+glitch. Signing out uses a shorter floor than signing in; it is an exit, not
+an arrival.
+
+The provider supplies the tasks. On the way in, that is the notification
+fetch, which needs a signed-in user and so cannot happen any earlier. On the
+way out it is revoking the session and dropping everything belonging to it.
+Teardown is deliberately deferred into the `leaving` phase so the splash
+covers it, rather than the app tearing itself down behind a screen the user
+has already left.
+
+`App` orders its checks around that: `leaving` is checked before
+authentication, because teardown clears the session partway through and the
+login screen would otherwise appear mid-splash; and the shell renders only
+at `ready`, so it cannot appear before its data has landed.
 
 **Styling.** Every colour resolves through the custom properties in
 `styles/tokens.css`. Appearance is set by two independent attributes on the
