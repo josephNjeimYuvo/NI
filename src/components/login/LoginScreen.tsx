@@ -21,6 +21,7 @@ export function LoginScreen() {
   const [password, setPassword] = useState(DEMO_CREDENTIALS.password)
   const [revealPassword, setRevealPassword] = useState(false)
   const [remember, setRemember] = useState(true)
+  const [showResetHint, setShowResetHint] = useState(false)
 
   const failed = session.error !== null
   const emailInvalid = failed && !email.trim()
@@ -141,10 +142,24 @@ export function LoginScreen() {
                   </span>
                   Remember me
                 </button>
-                <a className="ni-login__forgot" href="#forgot">
+                {/* Not a link: there is no reset flow to route to, and a
+                    dead href is worse than telling the user where to go. */}
+                <button
+                  type="button"
+                  className="ni-login__forgot"
+                  onClick={() => setShowResetHint((current) => !current)}
+                  aria-expanded={showResetHint}
+                >
                   Forgot password?
-                </a>
+                </button>
               </div>
+
+              {showResetHint && (
+                <div className="ni-login__note" role="status">
+                  Password resets are handled by your IT administrator. Contact the service desk
+                  on <strong>x4400</strong> or raise a ticket in ServiceNow.
+                </div>
+              )}
 
               <button type="submit" className="ni-login__submit">
                 Sign in

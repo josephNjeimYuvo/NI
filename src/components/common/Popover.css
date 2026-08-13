@@ -1,0 +1,134 @@
+/* Anchored panel shared by the site picker, grid options, tab and user menus. */
+
+.ni-popover__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 54;
+}
+
+.ni-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 55;
+  min-width: 200px;
+  max-height: 62vh;
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  background: var(--spanel);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
+  animation: niPopDown 0.16s ease;
+}
+
+.ni-popover--left {
+  left: 0;
+}
+
+.ni-popover--right {
+  right: 0;
+}
+
+.ni-popover__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 8px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.ni-popover__item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 9px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--txt);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.ni-popover__item:hover {
+  background: var(--hov);
+}
+
+.ni-popover__item--selected {
+  background: var(--tint);
+  color: var(--pri);
+  font-weight: 600;
+}
+
+.ni-popover__divider {
+  height: 1px;
+  margin: 5px 4px;
+  background: var(--bds);
+}
+
+/* Checkbox used by multi-select popovers. */
+.ni-popover__check {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--onsel);
+}
+
+.ni-popover__check--on {
+  background: var(--sel);
+  border-color: var(--sel);
+}
+
+.ni-popover__itemText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ni-popover__itemMeta {
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* Row of bulk actions at the top of a multi-select popover. */
+.ni-popover__actions {
+  display: flex;
+  gap: 6px;
+  padding: 2px 4px 8px 4px;
+  border-bottom: 1px solid var(--bds);
+  margin-bottom: 6px;
+}
+
+.ni-popover__action {
+  flex: 1;
+  height: 26px;
+  border: 1px solid var(--bd);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--txt);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+
+.ni-popover__action:hover {
+  background: var(--hov);
+}

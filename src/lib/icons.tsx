@@ -127,6 +127,8 @@ export const ICON_PATHS = {
     'M9.9 9.9a3 3 0 0 0 4.2 4.2',
   ],
   check: ['M20 6L9 17l-5-5'],
+  /** Neutral sort affordance, shown on columns that are not sorted. */
+  eq: ['M7 9l5-5 5 5', 'M7 15l5 5 5-5'],
   clock: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M12 7v5l3 2'],
   star: ['M12 3.5l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 10l6.1-.9L12 3.5z'],
   inbox: [

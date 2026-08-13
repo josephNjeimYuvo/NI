@@ -85,10 +85,21 @@
   font-weight: 600;
 }
 
+.ni-tab__icon {
+  display: flex;
+  flex-shrink: 0;
+}
+
 .ni-tab__label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Anchors the right-click menu to the strip rather than to one tab, so it
+   cannot be clipped by the scrolling track. */
+.ni-tabcontext {
+  position: relative;
 }
 
 .ni-tab__close {
@@ -200,17 +211,6 @@
   backdrop-filter: blur(22px);
   box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
   animation: niPopDown 0.16s ease;
-}
-
-@keyframes niPopDown {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .ni-tabmenu__heading {
@@ -368,16 +368,74 @@
   color: var(--cyan2);
 }
 
-/* Unread marker on the notification bell. */
-.ni-iconbutton__badge {
+/* Unread count on the notification bell. A bare dot said "something is
+   waiting"; the number says how much, which is what decides whether to look. */
+.ni-iconbutton__count {
   position: absolute;
-  top: 7px;
-  right: 8px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--cyan);
+  top: 2px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--crit);
   box-shadow: 0 0 0 2px var(--card);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------- user menu -- */
+
+.ni-usermenu {
+  position: relative;
+  display: flex;
+}
+
+.ni-usermenu__identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 9px 10px 9px;
+}
+
+.ni-usermenu__avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--pri);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ni-usermenu__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ni-usermenu__name {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-usermenu__email {
+  font-size: 11px;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------- breadcrumbs -- */
@@ -429,26 +487,47 @@
 
 /* ------------------------------------------------------- floating toggles -- */
 
-.ni-floating {
+/* One compact button instead of two bars stacked over the content. */
+.ni-demoSettings {
   position: fixed;
-  right: 24px;
+  right: 20px;
+  bottom: 20px;
   z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 20px;
+}
+
+.ni-demoSettings__trigger {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   border: 1px solid var(--bd);
   background: var(--card);
+  color: var(--mut);
   box-shadow: var(--sh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 0.16s ease,
+    border-color 0.16s ease;
 }
 
-.ni-floating--brand {
-  bottom: 64px;
+.ni-demoSettings__trigger:hover {
+  color: var(--cyan2);
+  border-color: var(--cyan2);
 }
 
-.ni-floating--mode {
-  bottom: 24px;
+/* The popover opens above the button, since it is anchored near the
+   bottom of the viewport. */
+.ni-demoSettings .ni-popover {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
+.ni-demoSettings__swatches {
+  display: flex;
+  gap: 6px;
+  padding: 2px 6px 8px 6px;
 }
 
 .ni-brandSwatch {
@@ -482,22 +561,3 @@
   transform: scale(1);
 }
 
-.ni-modeButton {
-  height: 28px;
-  padding: 0 14px;
-  border: none;
-  border-radius: 16px;
-  background: transparent;
-  color: var(--mut);
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background 0.18s ease,
-    color 0.18s ease;
-}
-
-.ni-modeButton--active {
-  background: var(--navy);
-  color: #ffffff;
-}

@@ -14,9 +14,9 @@ export function RecentModules() {
   return (
     <div className="ni-section">
       <div className="ni-section__head">
-        <span className="ni-section__title" style={{ flex: 1 }}>
+        <h2 className="ni-section__title" style={{ flex: 1 }}>
           Recent Modules
-        </span>
+        </h2>
         <button
           type="button"
           className="ni-section__action"
@@ -30,15 +30,11 @@ export function RecentModules() {
         {session.recent.slice(0, PREVIEW_COUNT).map((entry) => {
           const app = applicationOfModule(catalog, entry.name)
           return (
-            <div
+            <button
               key={entry.name}
+              type="button"
               className="ni-recent__row"
               onClick={() => openModule(entry.name)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') openModule(entry.name)
-              }}
             >
               <span className="ni-entryIcon">
                 <DuoIcon name={app.icon} size={17} weight={1.8} />
@@ -48,7 +44,7 @@ export function RecentModules() {
                 <span className="ni-recent__app">{app.short ?? app.label}</span>
               </span>
               <span className="ni-recent__ago">{relativeTime(entry.timestamp)}</span>
-            </div>
+            </button>
           )
         })}
       </div>

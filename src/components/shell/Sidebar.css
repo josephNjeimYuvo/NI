@@ -24,6 +24,100 @@
   display: flex;
   flex-shrink: 0;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+/* --------------------------------------------------------- module filter -- */
+
+.ni-sidebar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 10px 12px 4px 12px;
+}
+
+.ni-sidebar__searchIcon {
+  position: absolute;
+  left: 9px;
+  display: flex;
+  color: var(--mut);
+  pointer-events: none;
+}
+
+.ni-sidebar__searchInput {
+  width: 100%;
+  height: 32px;
+  padding: 0 30px 0 30px;
+  border-radius: 9px;
+  border: 1px solid var(--bd);
+  background: var(--inp);
+  color: var(--txt);
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.16s ease;
+}
+
+.ni-sidebar__searchInput::placeholder {
+  color: var(--dim);
+}
+
+.ni-sidebar__searchInput:focus {
+  border-color: var(--cyan2);
+}
+
+/* The native search affordance duplicates our own clear button. */
+.ni-sidebar__searchInput::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.ni-sidebar__searchClear {
+  position: absolute;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--mut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ni-sidebar__searchClear:hover {
+  background: var(--hov);
+  color: var(--txt);
+}
+
+.ni-sidebar__noMatch {
+  padding: 18px 12px;
+  text-align: center;
+}
+
+.ni-sidebar__noMatchTitle {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.ni-sidebar__noMatchAction {
+  margin-top: 10px;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--txt);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ni-sidebar__noMatchAction:hover {
+  background: var(--hov);
 }
 
 .ni-sidebar__toggle {
@@ -121,6 +215,11 @@
 
 .ni-cat:hover {
   background: var(--hov);
+}
+
+/* While filtering, categories are forced open and cannot be collapsed. */
+.ni-cat:disabled {
+  cursor: default;
 }
 
 .ni-cat--active {
@@ -375,6 +474,8 @@
   color: var(--logo);
   display: flex;
   cursor: pointer;
+  border: none;
+  background: transparent;
 }
 
 .ni-rail__toggle {

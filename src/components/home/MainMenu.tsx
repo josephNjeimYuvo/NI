@@ -1,4 +1,5 @@
 import { DuoIcon, Icon, MODULE_ICON } from '@/lib/icons'
+import { MODULE_ICONS } from '@/data/catalog'
 import { useAppState } from '@/state/AppStateProvider'
 import { QuickAccess } from './QuickAccess'
 import { RecentModules } from './RecentModules'
@@ -39,7 +40,7 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
             <span style={{ color: 'var(--cyan2)', display: 'flex' }}>
               <Icon name="grid" size={17} />
             </span>
-            <span className="ni-home__headingText">Network Insight Applications</span>
+            <h2 className="ni-home__headingText">Network Insight Applications</h2>
           </div>
 
           <div className="ni-panel">
@@ -70,7 +71,7 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
             <span className="ni-ico">
               <DuoIcon name={selectedApplication.icon} size={18} />
             </span>
-            <span className="ni-home__headingText">{selectedApplication.label}</span>
+            <h2 className="ni-home__headingText">{selectedApplication.label}</h2>
             <span className="ni-home__headingMeta">
               {selectedApplication.modules.length} modules
             </span>
@@ -88,45 +89,49 @@ export function MainMenu({ narrow }: { narrow: boolean }) {
                     key={module.label}
                     className={`ni-card${expanded ? ' ni-card--expanded' : ''}`}
                   >
-                    <div
-                      className="ni-card__head"
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => activateCard(module.label, grouping)}
-                      onKeyDown={(event) => {
-                        if (event.key !== 'Enter' && event.key !== ' ') return
-                        event.preventDefault()
-                        activateCard(module.label, grouping)
-                      }}
-                    >
-                      <span className="ni-card__icon">
-                        <DuoIcon name={selectedApplication.icon} size={20} />
-                      </span>
-                      <span className="ni-card__label">{module.label}</span>
+                    <div className="ni-card__head">
+                      {/* The card body is one button; the pin sits beside it
+                          rather than nested, since a button cannot contain
+                          another button. */}
+                      <button
+                        type="button"
+                        className="ni-card__open"
+                        aria-expanded={grouping ? expanded : undefined}
+                        onClick={() => activateCard(module.label, grouping)}
+                      >
+                        <span className="ni-card__icon">
+                          <DuoIcon
+                            name={MODULE_ICONS[module.label] ?? selectedApplication.icon}
+                            size={20}
+                          />
+                        </span>
+                        <span className="ni-card__label">{module.label}</span>
+                        {grouping ? (
+                          <span
+                            className={`ni-card__chevron${expanded ? ' ni-card__chevron--open' : ''}`}
+                          >
+                            <Icon name="chevD" size={15} />
+                          </span>
+                        ) : (
+                          <span className="ni-card__leafMark">
+                            <Icon name="arrowUpRight" size={15} />
+                          </span>
+                        )}
+                      </button>
 
                       <button
                         type="button"
                         className={`ni-card__pin${pinned ? ' ni-card__pin--pinned' : ''}`}
                         title={pinned ? 'Remove from Quick Access' : 'Pin to Quick Access'}
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          togglePin(module.label)
-                        }}
+                        aria-label={
+                          pinned
+                            ? `Remove ${module.label} from Quick Access`
+                            : `Pin ${module.label} to Quick Access`
+                        }
+                        onClick={() => togglePin(module.label)}
                       >
                         <Icon name="pin" size={14} />
                       </button>
-
-                      {grouping ? (
-                        <span
-                          className={`ni-card__chevron${expanded ? ' ni-card__chevron--open' : ''}`}
-                        >
-                          <Icon name="chevD" size={15} />
-                        </span>
-                      ) : (
-                        <span className="ni-card__leafMark">
-                          <Icon name="arrowUpRight" size={15} />
-                        </span>
-                      )}
                     </div>
 
                     {expanded && module.children && (

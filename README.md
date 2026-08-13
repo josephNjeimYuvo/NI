@@ -33,9 +33,12 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
   arrows to scroll through them and a dropdown listing every open module.
 - **Command palette** (`⌘K` / `Ctrl+K`) searching applications, modules and
   submodules, with arrow-key navigation.
-- **Module workspace** with filters, KPI tiles and a parameter-audit grid,
-  plus dedicated loading, error and empty states.
+- **Module workspace** with a multi-select site picker, metric picker,
+  sortable and paged parameter-audit grid, KPI tiles, a metric sparkline, and
+  dedicated loading, error and empty states.
 - **Notifications** and **activity** slide-overs.
+- **Accessible by structure**: landmarks, a heading outline, a skip link,
+  live-region announcements and a roving-tabindex tab strip.
 - **Theming**: three brands (blue, orange, red) × light and dark, all driven
   by CSS custom properties.
 
@@ -132,6 +135,22 @@ the pair for its own background: a selected application tile sets
 **Data.** Nothing in `components/` or `state/` imports a fixture directly.
 Everything goes through the interfaces in `services/contracts.ts`:
 `AuthService`, `CatalogService`, `NotificationService`, `ModuleService`.
+
+Filtering, sorting and paging are arguments to `getWorkspaceData` rather than
+operations on a local array, so the grid behaves the same once a real backend
+is answering and none of the UI changes when it is. `getTrend` rejects with
+`TrendUnavailableError` for designated modules, which is how the workspace
+demonstrates a partially-degraded screen without pretending the whole app is
+broken.
+
+**Accessibility.** The shell provides `header`, `nav` and `main` landmarks, a
+skip link, and one `h1` per view that names it — visually hidden, since the
+breadcrumb carries that job on screen. `Announcer` holds a permanent
+`aria-live` region so module loads, failures and toasts are spoken; it stays
+mounted because a live region has to exist before its content changes for the
+change to be announced. Every interactive element is a real control rather
+than a `div` with a role, and the tab strip implements the ARIA tablist
+pattern with a roving tabindex.
 
 ## Pointing it at a real backend
 

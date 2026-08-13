@@ -281,10 +281,19 @@
   background: var(--cyan2);
 }
 
+/* Wraps a chip that owns a popover, so the panel anchors to the chip. */
+.ni-chip-anchor {
+  position: relative;
+  display: flex;
+}
+
+/* Pushed right by its own margin rather than by a spacer, so it stays on the
+   right edge even when the chips wrap it onto a second line. */
 .ni-filters__actions {
   display: flex;
   align-items: center;
   gap: 2px;
+  margin-left: auto;
 }
 
 .ni-gridAction {
@@ -361,15 +370,125 @@
   color: #f59e0b;
 }
 
-/* A KPI slot that failed to load, sitting inline with the healthy ones. */
-.ni-kpi--failed {
-  border: 1px dashed rgba(var(--critRGB), 0.4);
+/* ----------------------------------------------------------------- trend -- */
+
+.ni-trend {
+  border: 1px solid var(--bd);
   border-radius: 10px;
-  background: rgba(var(--critRGB), 0.05);
-  padding: 14px 16px;
+  background: var(--card);
+  padding: 12px 14px 8px 14px;
+  box-shadow: var(--sh);
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ni-trend__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ni-trend__metric {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--mut);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ni-trend__delta {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--mut);
+}
+
+.ni-trend__delta--positive {
+  color: #059669;
+}
+
+.ni-trend__delta--warning {
+  color: #f59e0b;
+}
+
+.ni-trend__chart {
+  width: 100%;
+  height: 44px;
+  display: block;
+}
+
+/* The trend slot when the metric service could not answer. It fails on its
+   own rather than taking the workspace down, so it offers its own retry. */
+.ni-trend--failed {
+  border: 1px dashed rgba(var(--critRGB), 0.4);
+  background: rgba(var(--critRGB), 0.05);
+  flex-direction: row;
   align-items: center;
   gap: 12px;
+  padding: 14px 16px;
+  box-shadow: none;
+}
+
+.ni-trend__failIcon {
+  color: var(--crit);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.ni-trend__failText {
+  flex: 1;
+  min-width: 0;
+}
+
+.ni-trend__failTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.ni-trend__failBody {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+
+/* --------------------------------------------------------------- skeleton -- */
+
+.ni-skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--hov) 25%,
+    color-mix(in srgb, var(--mut) 12%, transparent) 37%,
+    var(--hov) 63%
+  );
+  background-size: 400% 100%;
+  animation: niShimmer 1.4s ease infinite;
+}
+
+.ni-skeleton--label {
+  width: 45%;
+  height: 11px;
+}
+
+.ni-skeleton--chart {
+  width: 100%;
+  height: 44px;
+}
+
+@keyframes niShimmer {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0% 50%;
+  }
 }
 
 .ni-kpi__retry {
@@ -414,6 +533,14 @@
   font-size: 13.5px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* How fresh the result is — a NOC surface should never leave this implicit. */
+.ni-grid__stamp {
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
 }
 
 .ni-grid__headButton {
@@ -462,15 +589,54 @@
   white-space: nowrap;
 }
 
-.ni-grid__th {
+/* The whole header cell is the sort control. */
+.ni-grid__sort {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.ni-grid__thMenu {
-  opacity: 0.5;
+.ni-grid__sort:hover {
+  color: var(--txt);
+}
+
+.ni-grid__sort--on {
+  color: var(--cyan2);
+}
+
+.ni-grid__sortMark {
   display: flex;
+  opacity: 0.45;
+  transition:
+    transform 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.ni-grid__sort:hover .ni-grid__sortMark {
+  opacity: 0.8;
+}
+
+.ni-grid__sort--on .ni-grid__sortMark {
+  opacity: 1;
+}
+
+/* Ascending points up; the icon is drawn pointing down. */
+.ni-grid__sort--on .ni-grid__sortMark {
+  transform: rotate(180deg);
+}
+
+.ni-grid__sort--on .ni-grid__sortMark--desc {
+  transform: none;
 }
 
 .ni-grid__table tbody tr {
@@ -566,6 +732,28 @@
   background: transparent;
   color: var(--mut);
   cursor: pointer;
+  transition:
+    background 0.14s ease,
+    opacity 0.14s ease;
+}
+
+.ni-pager__button:hover:not(:disabled) {
+  background: var(--hov);
+  color: var(--cyan2);
+}
+
+/* Held in place rather than hidden at the ends, so the footer does not
+   reflow every time you reach the first or last page. */
+.ni-pager__button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ni-pager__total {
+  margin-left: 4px;
+  font-size: 11.5px;
+  color: var(--dim);
+  white-space: nowrap;
 }
 
 .ni-pager__current {

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Icon } from '@/lib/icons'
+import { DuoIcon, Icon } from '@/lib/icons'
+import { applicationOfModule } from '@/lib/catalog'
 import { useAppState } from '@/state/AppStateProvider'
+import { Popover, PopoverDivider, PopoverItem } from '@/components/common/Popover'
 import './TopBar.css'
 
 /** Fraction of the visible width one arrow press travels. */
@@ -40,11 +42,13 @@ const NO_OVERFLOW: Overflow = { canScrollLeft: false, canScrollRight: false, hid
  * tab, for jumping straight to one that is far off-screen.
  */
 export function TabStrip() {
-  const { tabs } = useAppState()
+  const { tabs, catalog } = useAppState()
   // Written by the callback ref below, so it must be mutable.
   const trackRef = useRef<HTMLDivElement | null>(null)
   const [overflow, setOverflow] = useState<Overflow>(NO_OVERFLOW)
   const [menuOpen, setMenuOpen] = useState(false)
+  /** Tab whose context menu is open, if any. */
+  const [menuTab, setMenuTab] = useState<string | null>(null)
 
   const openTabs = tabs.tabs
 
@@ -160,6 +164,30 @@ export function TabStrip() {
     setMenuOpen(false)
   }
 
+  const runTabAction = (action: () => void) => {
+    action()
+    setMenuTab(null)
+  }
+
+  /** Arrow keys move between tabs; Enter and Space select the focused one. */
+  const onTabKeyDown = (event: React.KeyboardEvent, index: number) => {
+    const track = trackRef.current
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      const id = openTabs[index]?.id
+      if (id) tabs.selectTab(id)
+      return
+    }
+
+    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+    if (step === 0 || !track) return
+
+    event.preventDefault()
+    const next = (index + step + openTabs.length) % openTabs.length
+    const target = track.querySelector<HTMLElement>(`[data-tab-id="${CSS.escape(openTabs[next]!.id)}"]`)
+    target?.focus()
+  }
+
   // Arrows are pointless until something is actually out of reach.
   const scrollable = overflow.canScrollLeft || overflow.canScrollRight
   const hiddenCount = overflow.hiddenIds.length
@@ -182,8 +210,9 @@ export function TabStrip() {
       )}
 
       <div ref={attachTrack} className="ni-topbar__track ni-scroll-hidden" role="tablist">
-        {openTabs.map((tab) => {
+        {openTabs.map((tab, index) => {
           const active = tab.id === tabs.activeTabId
+          const app = applicationOfModule(catalog, tab.id)
           return (
             <div
               key={tab.id}
@@ -192,18 +221,29 @@ export function TabStrip() {
               className={`ni-tab${active ? ' ni-tab--active' : ''}`}
               role="tab"
               aria-selected={active}
-              tabIndex={0}
+              aria-label={`${tab.label}, ${app.short ?? app.label}`}
+              // Roving tabindex: one stop for the whole strip, then arrow
+              // keys move within it — the ARIA tablist pattern.
+              tabIndex={active || (!tabs.activeTabId && index === 0) ? 0 : -1}
               onClick={() => tabs.selectTab(tab.id)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') tabs.selectTab(tab.id)
+              onContextMenu={(event) => {
+                event.preventDefault()
+                setMenuTab(tab.id)
               }}
+              onKeyDown={(event) => onTabKeyDown(event, index)}
             >
+              {/* Carries the owning application's mark, so a tab is still
+                  identifiable once its label truncates. */}
+              <span className="ni-tab__icon">
+                <DuoIcon name={app.icon} size={15} />
+              </span>
               <span className="ni-tab__label">{tab.label}</span>
               <button
                 type="button"
                 className="ni-tab__close"
                 title="Close tab"
                 aria-label={`Close ${tab.label}`}
+                tabIndex={-1}
                 onClick={(event) => {
                   event.stopPropagation()
                   tabs.closeTab(tab.id)
@@ -215,6 +255,35 @@ export function TabStrip() {
           )
         })}
       </div>
+
+      {menuTab !== null && (
+        <div className="ni-tabcontext">
+          <Popover
+            open
+            onClose={() => setMenuTab(null)}
+            label="Tab actions"
+            width={216}
+          >
+            <PopoverItem onClick={() => runTabAction(() => tabs.closeTab(menuTab))}>
+              <Icon name="x" size={15} />
+              Close tab
+            </PopoverItem>
+            <PopoverItem onClick={() => runTabAction(() => tabs.closeOthers(menuTab))}>
+              <Icon name="collapseFs" size={15} />
+              Close other tabs
+            </PopoverItem>
+            <PopoverItem onClick={() => runTabAction(() => tabs.closeToTheRight(menuTab))}>
+              <Icon name="chevR" size={15} />
+              Close tabs to the right
+            </PopoverItem>
+            <PopoverDivider />
+            <PopoverItem onClick={() => runTabAction(() => tabs.closeAll())}>
+              <Icon name="inbox" size={15} />
+              Close all tabs
+            </PopoverItem>
+          </Popover>
+        </div>
+      )}
 
       {scrollable && (
         <button

@@ -52,6 +52,11 @@ export interface NavigationState {
   fullscreen: boolean
   toggleFullscreen: () => void
   exitFullscreen: () => void
+
+  /** Free-text filter narrowing the sidebar's module tree. */
+  filter: string
+  setFilter: (value: string) => void
+  clearFilter: () => void
 }
 
 /** Keeps the flyout on screen regardless of where its rail button sits. */
@@ -77,6 +82,7 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
   const [flyout, setFlyout] = useState<FlyoutTarget>(null)
   const [flyoutTop, setFlyoutTop] = useState(0)
   const [fullscreen, setFullscreen] = useState(false)
+  const [filter, setFilter] = useState('')
 
   const selectApp = useCallback((id: ApplicationId) => {
     setSelectedApp(id)
@@ -142,6 +148,7 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
   }, [])
 
   const exitFullscreen = useCallback(() => setFullscreen(false), [])
+  const clearFilter = useCallback(() => setFilter(''), [])
 
   return {
     selectedApp,
@@ -167,5 +174,8 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
     fullscreen,
     toggleFullscreen,
     exitFullscreen,
+    filter,
+    setFilter,
+    clearFilter,
   }
 }

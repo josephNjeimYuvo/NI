@@ -5,6 +5,7 @@ import { SplashLoader } from '@/components/module/SplashLoader'
 import { ActivityPanel } from '@/components/panels/ActivityPanel'
 import { CommandPalette } from '@/components/panels/CommandPalette'
 import { NotificationsPanel } from '@/components/panels/NotificationsPanel'
+import { Announcer } from '@/components/common/Announcer'
 import { Toast } from '@/components/common/Toast'
 import { useAppState } from '@/state/AppStateProvider'
 import { useNarrowLayout } from '@/state/useNarrowLayout'
@@ -30,8 +31,16 @@ export function AppShell() {
   const fullscreen = navigation.fullscreen && tab !== null
   const showChrome = !fullscreen
 
+  /** Names the current view for assistive technology and the page heading. */
+  const viewTitle = tab ? tab.label : 'Applications'
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100%', overflow: 'hidden' }}>
+      <a className="ni-skip-link" href="#ni-content">
+        Skip to content
+      </a>
+      <Announcer />
+
       {showChrome && (navigation.collapsed ? <SidebarRail /> : <Sidebar />)}
       {showChrome && navigation.collapsed && <RailFlyout />}
 
@@ -46,10 +55,17 @@ export function AppShell() {
       >
         {showChrome && <TopBar />}
 
-        <div
+        <main
+          id="ni-content"
           ref={layout.ref}
-          style={{ flex: 1, minHeight: 0, overflowY: 'auto', position: 'relative' }}
+          tabIndex={-1}
+          aria-label={viewTitle}
+          style={{ flex: 1, minHeight: 0, overflowY: 'auto', position: 'relative', outline: 'none' }}
         >
+          {/* The page's one h1. It is not drawn — the breadcrumb and grid
+              heading carry that visually — but it anchors the outline. */}
+          <h1 className="ni-visually-hidden">{viewTitle}</h1>
+
           {showChrome && <Breadcrumbs />}
 
           {tab === null && <MainMenu narrow={layout.narrow} />}
@@ -58,7 +74,7 @@ export function AppShell() {
           )}
           {tab?.status === 'error' && <ModuleError moduleName={tab.id} />}
           {tab?.status === 'ready' && <ModuleWorkspace moduleName={tab.label} />}
-        </div>
+        </main>
       </div>
 
       <FloatingToggles />

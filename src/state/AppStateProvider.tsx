@@ -117,7 +117,7 @@ export function AppStateProvider({
   const navigation = useNavigation()
   const notifications = useNotifications()
   const palette = usePalette()
-  const workspace = useModuleWorkspace()
+  const workspace = useModuleWorkspace(tabs.activeTab?.id ?? null)
   const toast = useToast()
 
   const { load: loadNotifications, clear: clearNotifications } = notifications

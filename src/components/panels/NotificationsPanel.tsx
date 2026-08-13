@@ -63,10 +63,22 @@ export function NotificationsPanel() {
         <div className="ni-panel-slide__body">
           {notifications.visible.map((item) => {
             const color = SEVERITY_COLOR[item.severity]
+            const target = NOTIFICATION_TARGETS[item.category] ?? 'Run History'
             return (
+              /* The row looked clickable but only its buttons worked, so the
+                 whole row now opens the notification's module. */
               <div
                 key={item.id}
                 className={`ni-notif__item${item.read ? '' : ' ni-notif__item--unread'}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`${item.title}. Open ${target}`}
+                onClick={() => openModule(target)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') return
+                  event.preventDefault()
+                  openModule(target)
+                }}
               >
                 <span className="ni-notif__dot" style={{ background: color }} />
                 <span className="ni-notif__icon" style={{ color }}>
@@ -84,16 +96,20 @@ export function NotificationsPanel() {
                     <button
                       type="button"
                       className="ni-notif__open"
-                      onClick={() =>
-                        openModule(NOTIFICATION_TARGETS[item.category] ?? 'Run History')
-                      }
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        openModule(target)
+                      }}
                     >
-                      Open
+                      Open {target}
                     </button>
                     <button
                       type="button"
                       className="ni-notif__dismiss"
-                      onClick={() => notifications.dismiss(item.id)}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        notifications.dismiss(item.id)
+                      }}
                     >
                       Dismiss
                     </button>

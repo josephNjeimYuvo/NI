@@ -111,11 +111,31 @@ export interface ModuleLoadResult {
 /** Grid aggregation level. */
 export type GridLevel = 'Cell' | 'Site'
 
+/** A network site the audit can be scoped to. */
+export interface Site {
+  /** Short code, e.g. `LSB0421` — also what the grid displays. */
+  id: string
+  name: string
+  region: string
+}
+
+export type SortDirection = 'asc' | 'desc'
+
+export interface GridSort {
+  /** Key of the column being sorted, matching `AUDIT_COLUMNS`. */
+  column: string
+  direction: SortDirection
+}
+
 /** Filters the module workspace applies to its data requests. */
 export interface ModuleDataFilter {
-  /** Whether the user has committed a site selection. */
-  sitesSelected: boolean
+  /** Site codes in scope. Empty means nothing is selected yet. */
+  sites: string[]
   level: GridLevel
+  /** Zero-based page index. */
+  page: number
+  pageSize: number
+  sort: GridSort | null
 }
 
 /** One row of the parameter-audit grid. */
@@ -140,12 +160,32 @@ export interface Kpi {
 
 /** Everything the module workspace renders for the current filter. */
 export interface ModuleWorkspaceData {
+  /** Just the requested page, already sorted. */
   rows: AuditRow[]
   kpis: Kpi[]
   /** Managed object class in scope, shown in the filter bar. */
   managedObject: string
-  /** Total matching items on the server, for the footer count. */
+  /** Total matching rows across every page, for the footer count. */
   totalItems: number
+  /** Total pages available under the current page size. */
+  totalPages: number
+  /** When this result was produced, for the freshness stamp. */
+  updatedAt: number
+}
+
+/** One point on a trend series. */
+export interface TrendPoint {
+  label: string
+  value: number
+}
+
+/** A metric plotted over time, shown beside the KPI tiles. */
+export interface TrendSeries {
+  metric: string
+  points: TrendPoint[]
+  /** Human-readable movement across the window. */
+  delta: string
+  tone: KpiTone
 }
 
 /** The signed-in user. */

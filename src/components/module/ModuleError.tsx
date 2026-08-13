@@ -55,7 +55,7 @@ export function ModuleError({ moduleName }: { moduleName: string }) {
             <button
               type="button"
               className="ni-error__copy"
-              onClick={() => workspace.copyCorrelationId(correlationId)}
+              onClick={() => workspace.copyToClipboard(correlationId)}
             >
               <Icon name="copy" size={13} />
               {workspace.copied ? 'Copied' : 'Copy correlation ID'}

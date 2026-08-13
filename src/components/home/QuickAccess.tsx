@@ -5,13 +5,13 @@ import { useAppState } from '@/state/AppStateProvider'
 import './MainMenu.css'
 
 /**
- * Pinned modules, reorderable by drag.
+ * Pinned modules, reorderable by drag or by Alt + arrow keys.
  *
  * Drag indices are local: they exist only while a drag is in flight, so
  * there is nothing for the rest of the app to know about them.
  */
 export function QuickAccess() {
-  const { catalog, session, openModule, togglePin } = useAppState()
+  const { catalog, session, activity, openModule, togglePin, toast } = useAppState()
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dropIndex, setDropIndex] = useState<number | null>(null)
 
@@ -20,11 +20,32 @@ export function QuickAccess() {
     setDropIndex(null)
   }
 
+  /** Alt + arrow moves a card, which drag alone cannot offer a keyboard user. */
+  const moveByKeyboard = (event: React.KeyboardEvent, index: number, name: string) => {
+    if (!event.altKey) return
+    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+    if (step === 0) return
+
+    const target = index + step
+    if (target < 0 || target >= session.favorites.length) return
+
+    event.preventDefault()
+    session.reorderFavorites(index, target)
+    toast.show(`${name} moved to position ${target + 1}`)
+  }
+
   return (
-    <div className="ni-section">
+    <section className="ni-section" aria-label="Quick Access">
       <div className="ni-section__head">
-        <span className="ni-section__title">Quick Access</span>
-        <span className="ni-section__hint">Drag to reorder · hover a card to pin or remove</span>
+        <h2 className="ni-section__title">Quick Access</h2>
+        <span className="ni-section__hint">Drag or Alt + arrows to reorder</span>
+        <button
+          type="button"
+          className="ni-section__action"
+          onClick={() => activity.openActivity('favorites')}
+        >
+          View All
+        </button>
       </div>
 
       <div className="ni-quick">
@@ -58,14 +79,15 @@ export function QuickAccess() {
                 endDrag()
               }}
               onDragEnd={endDrag}
-              onClick={() => openModule(name)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') openModule(name)
-              }}
             >
-              <div className="ni-quick__row">
+              <button
+                type="button"
+                className="ni-quick__open"
+                aria-label={`${name}, ${app.short ?? app.label}. Position ${index + 1} of ${session.favorites.length}`}
+                aria-keyshortcuts="Alt+ArrowLeft Alt+ArrowRight"
+                onClick={() => openModule(name)}
+                onKeyDown={(event) => moveByKeyboard(event, index, name)}
+              >
                 <span className="ni-entryIcon">
                   <DuoIcon name={app.icon} size={17} weight={1.8} />
                 </span>
@@ -73,16 +95,14 @@ export function QuickAccess() {
                   <span className="ni-quick__name">{name}</span>
                   <span className="ni-quick__app">{app.short ?? app.label}</span>
                 </span>
-              </div>
+              </button>
 
               <button
                 type="button"
                 className="ni-quick__remove"
                 title="Remove from Quick Access"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  togglePin(name)
-                }}
+                aria-label={`Remove ${name} from Quick Access`}
+                onClick={() => togglePin(name)}
               >
                 <Icon name="x" size={13} />
               </button>
@@ -102,6 +122,6 @@ export function QuickAccess() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   )
 }

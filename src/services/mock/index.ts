@@ -4,19 +4,31 @@ import {
   NAVIGATION,
   NORMAL_MODE_APPS,
 } from '@/data/catalog'
-import { AUDIT_ROWS, EMPTY_KPIS, MANAGED_OBJECT, POPULATED_KPIS, TOTAL_ITEMS } from '@/data/moduleData'
+import {
+  AUDIT_ROWS,
+  EMPTY_KPIS,
+  FAILING_TREND_MODULES,
+  MANAGED_OBJECT,
+  METRICS,
+  POPULATED_KPIS,
+  SITES,
+  buildTrend,
+} from '@/data/moduleData'
 import { NOTIFICATIONS } from '@/data/notifications'
 import { buildDefaultSession } from '@/data/session'
 import type {
   AppNotification,
+  AuditRow,
   Catalog,
   Credentials,
   ModuleDataFilter,
   ModuleLoadResult,
   ModuleWorkspaceData,
   Session,
+  Site,
+  TrendSeries,
 } from '@/types'
-import { AuthError, type Services } from '../contracts'
+import { AuthError, TrendUnavailableError, type Services } from '../contracts'
 
 /** How long a module takes to come up, in ms. */
 const MODULE_LOAD_MS = 1500
@@ -88,21 +100,73 @@ const mockModules = {
   },
 
   async getWorkspaceData(filter: ModuleDataFilter): Promise<ModuleWorkspaceData> {
-    if (!filter.sitesSelected) {
+    if (filter.sites.length === 0) {
       return {
         rows: [],
         kpis: EMPTY_KPIS,
         managedObject: MANAGED_OBJECT.empty,
-        totalItems: TOTAL_ITEMS,
+        totalItems: 0,
+        totalPages: 0,
+        updatedAt: Date.now(),
       }
     }
+
+    const matching = AUDIT_ROWS.filter((row) => filter.sites.includes(row.site))
+    const sorted = sortRows(matching, filter)
+
+    // Filtering, sorting and slicing all happen here rather than in the UI,
+    // because a real backend would do the same and the component should not
+    // have to change when it does.
+    const start = filter.page * filter.pageSize
     return {
-      rows: AUDIT_ROWS,
+      rows: sorted.slice(start, start + filter.pageSize),
       kpis: POPULATED_KPIS,
       managedObject: MANAGED_OBJECT.selected,
-      totalItems: TOTAL_ITEMS,
+      totalItems: matching.length,
+      totalPages: Math.max(1, Math.ceil(matching.length / filter.pageSize)),
+      updatedAt: Date.now(),
     }
   },
+
+  async listSites(): Promise<Site[]> {
+    return SITES
+  },
+
+  async listMetrics(): Promise<string[]> {
+    return METRICS
+  },
+
+  async getTrend(moduleName: string, metric: string): Promise<TrendSeries> {
+    // A brief delay so the widget's loading state is real rather than
+    // instantaneous, and retrying visibly does something.
+    await delay(600)
+    if (FAILING_TREND_MODULES.includes(moduleName)) {
+      throw new TrendUnavailableError('Metric service timed out.')
+    }
+    return buildTrend(metric)
+  },
+}
+
+/** Sorts a copy of the rows by the requested column, leaving order stable. */
+function sortRows(rows: AuditRow[], filter: ModuleDataFilter): AuditRow[] {
+  if (!filter.sort) return rows
+
+  const { column, direction } = filter.sort
+  const factor = direction === 'asc' ? 1 : -1
+
+  return [...rows].sort((a, b) => {
+    const left = String(a[column as keyof AuditRow] ?? '')
+    const right = String(b[column as keyof AuditRow] ?? '')
+
+    // Numeric where both sides look numeric, so -124 sorts below -120
+    // rather than after it as text would.
+    const leftNumber = Number(left)
+    const rightNumber = Number(right)
+    if (left !== '' && right !== '' && !Number.isNaN(leftNumber) && !Number.isNaN(rightNumber)) {
+      return (leftNumber - rightNumber) * factor
+    }
+    return left.localeCompare(right, 'en', { numeric: true }) * factor
+  })
 }
 
 /** Fixture-backed implementation of the full service surface. */

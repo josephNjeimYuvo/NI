@@ -48,15 +48,11 @@ export function ActivityPanel() {
           {entries.map((entry) => {
             const app = applicationOfModule(catalog, entry.name)
             return (
-              <div
+              <button
                 key={entry.name}
+                type="button"
                 className="ni-activity__row"
                 onClick={() => open(entry.name)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') open(entry.name)
-                }}
               >
                 <span className="ni-entryIcon">
                   <DuoIcon name={app.icon} size={17} weight={1.8} />
@@ -68,7 +64,7 @@ export function ActivityPanel() {
                 <span className="ni-activity__ago">
                   {entry.timestamp === null ? '' : relativeTime(entry.timestamp)}
                 </span>
-              </div>
+              </button>
             )
           })}
 

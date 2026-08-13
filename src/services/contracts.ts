@@ -6,6 +6,8 @@ import type {
   ModuleLoadResult,
   ModuleWorkspaceData,
   Session,
+  Site,
+  TrendSeries,
 } from '@/types'
 
 /**
@@ -45,8 +47,22 @@ export interface ModuleService {
    */
   load(name: string, onProgress?: (percent: number) => void): Promise<ModuleLoadResult>
 
-  /** Data for the module workspace under the supplied filter. */
+  /** One page of workspace data under the supplied filter. */
   getWorkspaceData(filter: ModuleDataFilter): Promise<ModuleWorkspaceData>
+
+  /** Sites the audit can be scoped to. */
+  listSites(): Promise<Site[]>
+
+  /** Metrics available to the trend widget. */
+  listMetrics(): Promise<string[]>
+
+  /**
+   * Trend series for a metric within a module. Rejects with
+   * {@link TrendUnavailableError} when the metric service cannot answer,
+   * which the workspace surfaces as a retryable widget rather than failing
+   * the whole screen.
+   */
+  getTrend(moduleName: string, metric: string): Promise<TrendSeries>
 }
 
 /** The complete service surface handed to the app. */
@@ -62,5 +78,13 @@ export class AuthError extends Error {
   constructor(message: string) {
     super(message)
     this.name = 'AuthError'
+  }
+}
+
+/** Thrown by {@link ModuleService.getTrend} when the metric service fails. */
+export class TrendUnavailableError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'TrendUnavailableError'
   }
 }

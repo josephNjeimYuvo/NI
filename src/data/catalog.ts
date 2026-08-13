@@ -199,6 +199,72 @@ export const NAVIGATION: Record<ApplicationId, NavigationTree> = {
   react: { items: ['Sample Widget', 'Chart Playground'] },
 }
 
+/**
+ * Icon overrides for individual modules.
+ *
+ * Modules fall back to their application's icon, which is fine in a list but
+ * makes a grid of module cards look like the same thing repeated. These
+ * distinguish the ones where the card grid is the primary way in; anything
+ * absent keeps the application mark.
+ */
+export const MODULE_ICONS: Record<string, string> = {
+  // RAN Analytics
+  'Performance Optimization Analytics': 'exec',
+  'Map Analysis': 'site',
+  'NI Audit': 'shield',
+  'RAN 4G Dashboard (New)': 'dash',
+  'Unified Map (New)': 'site',
+  // Core Analytics
+  'Core CCPC': 'core',
+  'Core KPI Browser': 'exec',
+  'Signalling Analytics': 'netopt',
+  'Subscriber Trace': 'search',
+  // Fault Management
+  'Active Alarms': 'alert',
+  'Alarm History': 'clock',
+  'Alarm Correlation': 'netopt',
+  'Fault Dashboards': 'dash',
+  // Data Management
+  'Metrics-Alarms': 'alert',
+  'Data Profiles': 'data',
+  Correlations: 'netopt',
+  'Threshold System Settings': 'admin',
+  'Events Alarms': 'bell',
+  'Data Loaders': 'data',
+  // Network Optimization
+  'Optimization Automation': 'auto',
+  'Parameter Audit': 'shield',
+  'Neighbour Optimization': 'ran',
+  'Capacity Planning': 'exec',
+  // Customized Dashboards
+  'My Dashboards': 'dash',
+  'Shared Dashboards': 'share',
+  'Dashboard Builder': 'grid',
+  // Site Integration
+  'Input Builder - ERC': 'file',
+  'Site Onboarding': 'site',
+  'Integration Status': 'check',
+  'Script Library': 'file',
+  // Executive Dashboards
+  'Network Health': 'shield',
+  'KPI Scorecard': 'exec',
+  'SLA Compliance': 'check',
+  // Automation Framework
+  Workflows: 'auto',
+  'Job Scheduler': 'clock',
+  'Run History': 'clock',
+  'Automation Rules': 'admin',
+  // Administration
+  Users: 'user',
+  'Roles & Permissions': 'shield',
+  'System Settings': 'admin',
+  'Audit Log': 'file',
+  License: 'file',
+  // React Component
+  'Sample Widget': 'grid',
+  'Chart Playground': 'exec',
+}
+
 /** Applications that stay visible when the catalog is in `Normal` mode. */
 export const NORMAL_MODE_APPS: ApplicationId[] = ['ran', 'siteint', 'fault']
 

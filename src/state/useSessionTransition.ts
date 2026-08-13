@@ -11,6 +11,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  */
 const MINIMUM_DURATION = { entering: 1800, leaving: 1100 } as const
 
+/**
+ * Floors used when the viewer has asked for reduced motion. The splash still
+ * appears — it is covering real work — but it stops being a held beat, since
+ * the animation is the only reason the full duration exists.
+ */
+const REDUCED_DURATION = { entering: 400, leaving: 250 } as const
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+}
+
 /** How often the progress bar advances, in ms. */
 const PROGRESS_TICK = 60
 
@@ -76,7 +87,7 @@ export function useSessionTransition({ enter, leave }: Options): SessionTransiti
     if (phase !== 'entering' && phase !== 'leaving') return
 
     const tasks = phase === 'entering' ? enterRef.current : leaveRef.current
-    const minimum = MINIMUM_DURATION[phase]
+    const minimum = prefersReducedMotion() ? REDUCED_DURATION[phase] : MINIMUM_DURATION[phase]
     const settled: TransitionPhase = phase === 'entering' ? 'ready' : 'idle'
 
     let cancelled = false

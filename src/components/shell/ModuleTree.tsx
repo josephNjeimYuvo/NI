@@ -43,16 +43,23 @@ interface VendorGroupProps {
   scope: string
   vendor: NavigationVendor
   variant?: 'sidebar' | 'flyout'
+  /** Overrides the collapsed state, used while the tree is filtered. */
+  forceOpen?: boolean
 }
 
 /**
  * A vendor and its modules. Vendors start open, so the navigation state
  * tracks the ones explicitly closed.
  */
-export function VendorGroup({ scope, vendor, variant = 'sidebar' }: VendorGroupProps) {
+export function VendorGroup({
+  scope,
+  vendor,
+  variant = 'sidebar',
+  forceOpen = false,
+}: VendorGroupProps) {
   const { navigation } = useAppState()
   const key = `${scope}/${vendor.name}`
-  const open = !navigation.closedVendors[key]
+  const open = forceOpen || !navigation.closedVendors[key]
 
   return (
     <div className={variant === 'flyout' ? 'ni-flyout__vendor' : 'ni-vendor'}>

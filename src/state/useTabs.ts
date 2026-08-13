@@ -16,6 +16,10 @@ export interface TabsState {
   progress: number
   openTab: (moduleName: string) => void
   closeTab: (id: string) => void
+  /** Closes everything except the named tab, which becomes active. */
+  closeOthers: (id: string) => void
+  /** Closes every tab positioned after the named one. */
+  closeToTheRight: (id: string) => void
   /** Passing `null` deselects without closing anything, showing the main menu. */
   selectTab: (id: string | null) => void
   closeAll: () => void
@@ -95,6 +99,25 @@ export function useTabs(catalog: Catalog | null): TabsState {
     })
   }, [])
 
+  const closeOthers = useCallback((id: string) => {
+    setBook((current) => {
+      const kept = current.tabs.filter((tab) => tab.id === id)
+      return { tabs: kept, activeId: kept.length ? id : null }
+    })
+  }, [])
+
+  const closeToTheRight = useCallback((id: string) => {
+    setBook((current) => {
+      const index = current.tabs.findIndex((tab) => tab.id === id)
+      if (index === -1) return current
+      const tabs = current.tabs.slice(0, index + 1)
+      // If the active tab was one of the closed ones, fall back to the
+      // anchor tab rather than leaving nothing selected.
+      const activeId = tabs.some((tab) => tab.id === current.activeId) ? current.activeId : id
+      return { tabs, activeId }
+    })
+  }, [])
+
   const selectTab = useCallback((id: string | null) => {
     setBook((current) => ({ ...current, activeId: id }))
   }, [])
@@ -114,6 +137,8 @@ export function useTabs(catalog: Catalog | null): TabsState {
     progress,
     openTab,
     closeTab,
+    closeOthers,
+    closeToTheRight,
     selectTab,
     closeAll,
   }

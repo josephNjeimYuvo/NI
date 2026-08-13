@@ -27,19 +27,16 @@ export function SidebarRail() {
   const expandSidebar = () => navigation.toggleCollapsed(activeCategory)
 
   return (
-    <div className="ni-rail">
-      <div
+    <nav className="ni-rail" aria-label="Modules">
+      <button
+        type="button"
         className="ni-rail__logo"
         title="Back to main menu"
-        role="button"
-        tabIndex={0}
+        aria-label="Back to main menu"
         onClick={goHome}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') goHome()
-        }}
       >
         <LogoMark size={29} />
-      </div>
+      </button>
 
       <button
         type="button"
@@ -93,6 +90,6 @@ export function SidebarRail() {
       <div className="ni-rail__status" title="All systems operational">
         <span className="ni-status-dot" style={{ display: 'block' }} />
       </div>
-    </div>
+    </nav>
   )
 }
