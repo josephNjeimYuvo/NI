@@ -36,7 +36,7 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
 - **Module workspace** with a multi-select site picker, metric picker,
   sortable and paged parameter-audit grid, KPI tiles, a metric sparkline, and
   dedicated loading, error and empty states.
-- **Notifications** and **activity** slide-overs.
+- **Notifications** slide-over.
 - **Accessible by structure**: landmarks, a heading outline, a skip link,
   live-region announcements and a roving-tabindex tab strip.
 - **Theming**: three brands (blue, orange, red) × light and dark, all driven

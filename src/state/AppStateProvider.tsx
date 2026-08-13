@@ -38,9 +38,6 @@ import {
   type TransitionTask,
 } from './useSessionTransition'
 
-/** Which list the activity slide-over is showing. */
-export type ActivityMode = 'recent' | 'favorites'
-
 /** Most Quick Links the command palette offers before a query is typed. */
 const QUICK_LINK_LIMIT = 6
 
@@ -66,13 +63,6 @@ export interface AppState {
   flatResults: SearchResult[]
   /** Favorites still reachable in the current mode, capped for the palette. */
   quickLinks: string[]
-
-  activity: {
-    open: boolean
-    mode: ActivityMode
-    openActivity: (mode?: ActivityMode) => void
-    close: () => void
-  }
 
   signIn: (credentials: Credentials) => Promise<void>
   signOut: () => void
@@ -146,9 +136,6 @@ export function AppStateProvider({
   )
 
   const transition = useSessionTransition({ enter: enterTasks, leave: leaveTasks })
-
-  const [activityOpen, setActivityOpen] = useState(false)
-  const [activityMode, setActivityMode] = useState<ActivityMode>('recent')
 
   useEffect(() => {
     let active = true
@@ -247,13 +234,6 @@ export function AppStateProvider({
     [navigation, tabs, palette, openModule],
   )
 
-  const openActivity = useCallback((mode: ActivityMode = 'recent') => {
-    setActivityMode(mode)
-    setActivityOpen(true)
-  }, [])
-
-  const closeActivity = useCallback(() => setActivityOpen(false), [])
-
   // Global shortcuts. Registered once and reading the latest handlers through
   // the effect's dependencies, so the palette cursor stays in step with the
   // result list it is walking.
@@ -314,12 +294,6 @@ export function AppStateProvider({
     searchResults,
     flatResults,
     quickLinks,
-    activity: {
-      open: activityOpen,
-      mode: activityMode,
-      openActivity,
-      close: closeActivity,
-    },
     signIn,
     signOut,
     openModule,

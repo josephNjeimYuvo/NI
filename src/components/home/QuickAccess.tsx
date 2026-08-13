@@ -11,7 +11,7 @@ import './MainMenu.css'
  * there is nothing for the rest of the app to know about them.
  */
 export function QuickAccess() {
-  const { catalog, session, activity, openModule, togglePin, toast } = useAppState()
+  const { catalog, session, openModule, togglePin, toast } = useAppState()
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dropIndex, setDropIndex] = useState<number | null>(null)
 
@@ -39,13 +39,6 @@ export function QuickAccess() {
       <div className="ni-section__head">
         <h2 className="ni-section__title">Quick Access</h2>
         <span className="ni-section__hint">Drag or Alt + arrows to reorder</span>
-        <button
-          type="button"
-          className="ni-section__action"
-          onClick={() => activity.openActivity('favorites')}
-        >
-          View All
-        </button>
       </div>
 
       <div className="ni-quick">

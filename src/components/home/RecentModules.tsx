@@ -9,7 +9,7 @@ const PREVIEW_COUNT = 5
 
 /** The most recently opened modules, newest first. */
 export function RecentModules() {
-  const { catalog, session, openModule, activity } = useAppState()
+  const { catalog, session, openModule } = useAppState()
 
   return (
     <div className="ni-section">
@@ -17,13 +17,6 @@ export function RecentModules() {
         <h2 className="ni-section__title" style={{ flex: 1 }}>
           Recent Modules
         </h2>
-        <button
-          type="button"
-          className="ni-section__action"
-          onClick={() => activity.openActivity('recent')}
-        >
-          View All
-        </button>
       </div>
 
       <div className="ni-recent">

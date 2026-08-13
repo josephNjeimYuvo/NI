@@ -2,7 +2,6 @@ import { MainMenu } from '@/components/home/MainMenu'
 import { ModuleError } from '@/components/module/ModuleError'
 import { ModuleWorkspace } from '@/components/module/ModuleWorkspace'
 import { SplashLoader } from '@/components/module/SplashLoader'
-import { ActivityPanel } from '@/components/panels/ActivityPanel'
 import { CommandPalette } from '@/components/panels/CommandPalette'
 import { NotificationsPanel } from '@/components/panels/NotificationsPanel'
 import { Announcer } from '@/components/common/Announcer'
@@ -24,7 +23,7 @@ import { TopBar } from './TopBar'
  * screen hides all surrounding chrome so a module can use the whole viewport.
  */
 export function AppShell() {
-  const { tabs, navigation, notifications, palette, activity, toast } = useAppState()
+  const { tabs, navigation, notifications, palette, toast } = useAppState()
   const layout = useNarrowLayout()
 
   const tab = tabs.activeTab
@@ -80,7 +79,6 @@ export function AppShell() {
       <FloatingToggles />
 
       {notifications.open && <NotificationsPanel />}
-      {activity.open && <ActivityPanel />}
       {palette.open && <CommandPalette />}
       {toast.message && <Toast message={toast.message} />}
     </div>

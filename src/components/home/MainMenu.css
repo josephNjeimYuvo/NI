@@ -288,20 +288,6 @@
   white-space: nowrap;
 }
 
-.ni-section__action {
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  color: var(--pri);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.ni-section__action:hover {
-  color: var(--cyan2);
-}
-
 .ni-quick {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
