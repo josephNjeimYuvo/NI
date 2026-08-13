@@ -209,7 +209,7 @@ export function TabStrip() {
                   tabs.closeTab(tab.id)
                 }}
               >
-                <Icon name="x" size={13} />
+                <Icon name="x" size={15} />
               </button>
             </div>
           )
