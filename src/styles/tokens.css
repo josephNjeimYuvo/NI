@@ -23,6 +23,15 @@
   --pg: #f9fafb;
   --pgb: #f1f4f8;
   --card: #ffffff;
+  /**
+   * Navigation surface, for the sidebar and the collapsed rail.
+   *
+   * Deliberately not `--pg`: the nav previously shared the content
+   * background and was separated from it only by a hairline, which left the
+   * whole left edge reading as one flat field. Recessing it slightly gives
+   * the shell a front and a back.
+   */
+  --nav: #edf1f7;
   --bd: #e5e7eb;
   --bds: #e8ebf0;
   --inp: #f8fafc;
@@ -98,6 +107,9 @@
   --pg: #0b111e;
   --pgb: #0b111e;
   --card: #151d2e;
+  /* On dark the nav lifts instead of recessing — there is nothing below
+     the page colour to recess into. */
+  --nav: #101827;
   --bd: #28324a;
   --bds: #28324a;
   --txt: #e7ebf3;
@@ -130,6 +142,7 @@
 /* ---------------------------------------------------------------- orange -- */
 
 [data-brand='orange'] {
+  --nav: #f4efe8;
   --navy: #1a1713;
   --navy2: #2a231c;
   --cyan: #ff9a3d;
@@ -173,6 +186,7 @@
   --pg: #131110;
   --pgb: #131110;
   --card: #1e1b18;
+  --nav: #191614;
   --bd: #363028;
   --bds: #363028;
   --txt: #f4ede6;
@@ -206,6 +220,7 @@
 /* ------------------------------------------------------------------- red -- */
 
 [data-brand='red'] {
+  --nav: #f6ebec;
   --navy: #4a0a10;
   --navy2: #6b0e16;
   --cyan: #f2707b;
@@ -252,6 +267,7 @@
   --pg: #140c0d;
   --pgb: #140c0d;
   --card: #211516;
+  --nav: #1b1112;
   --bd: #3b2527;
   --bds: #3b2527;
   --txt: #f6eaeb;

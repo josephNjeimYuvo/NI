@@ -1,5 +1,21 @@
 /* Shared by the expanded sidebar, the collapsed rail and the rail flyout. */
 
+/**
+ * Navigation surface, shared by the expanded sidebar and the collapsed rail.
+ *
+ * A flat fill would only trade one dull field for another, so the colour is
+ * carried by a brand-tinted wash that fades out by roughly the fold. The tint
+ * is composed from `--pRGB`, which every brand redefines, so the wash follows
+ * the palette without needing a value per brand.
+ */
+.ni-sidebar,
+.ni-rail {
+  background:
+    linear-gradient(180deg, rgba(var(--pRGB), 0.06), rgba(var(--pRGB), 0) 46%),
+    var(--nav);
+  border-right: 1px solid var(--bds);
+}
+
 .ni-sidebar {
   position: relative;
   z-index: 30;
@@ -8,8 +24,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: transparent;
-  border-right: 1px solid var(--bds);
 }
 
 .ni-sidebar__header {
@@ -465,8 +479,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: transparent;
-  border-right: 1px solid var(--bds);
 }
 
 .ni-rail__logo {
