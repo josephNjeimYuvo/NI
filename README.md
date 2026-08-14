@@ -106,21 +106,23 @@ room at all and no tab is reachable. At 800px with the sidebar *expanded*
 the track is still too narrow for a full tab — collapsing the sidebar, or
 the overflow menu, covers that case.
 
-**Failure screens.** A module that will not open fails for one of two
+**Failure screens.** A module that will not open fails for one of three
 reasons, and `ModuleError` treats them as different events rather than as one
 message with different words:
 
-| | not provisioned | timed out |
-| --- | --- | --- |
-| Catalog | listed in `failingModules` | absent — expected to work |
-| Illustration | dashed frame, unconnected arcs, clock | intact frame, cut through, alarm |
-| Primary action | Request access | Retry |
-| Repeats? | every time | probably not |
+| | not provisioned | timed out | internal error |
+| --- | --- | --- | --- |
+| Code | `NI-MODULE-404` | `NI-GATEWAY-504` | `NI-CORE-500` |
+| Illustration | dashed frame, unconnected arcs | intact, cut through | arcs intact, frame fractured |
+| Badge | clock, neutral | alarm, critical | cross, critical |
+| Primary action | Request access | Retry | Report to service desk |
+| Repeats? | every time | probably not | every time |
 
 The distinction matters because the screen used to present everything as a
-gateway timeout with Retry as its primary button. `Unified Map (New)` is in
-`failingModules` and so fails identically on every attempt — the one action
-on offer was the one that could never succeed.
+gateway timeout with Retry as its primary button. Two of the three kinds
+reproduce on every attempt, so for those the one action on offer was the one
+that could never succeed. Only the timeout keeps Retry; the other two hand
+over the action that does move things forward.
 
 Both screens draw the module's own catalog icon, in the same two tones it
 carries everywhere else, so the picture is about the thing that was clicked.
@@ -176,12 +178,16 @@ is answering and none of the UI changes when it is. `getTrend` rejects with
 demonstrates a partially-degraded screen without pretending the whole app is
 broken.
 
-Two kinds of failure are wired into the fixtures. `Unified Map (New)` is in
-the catalog's `failingModules` and never opens, which is what a real
-unprovisioned module looks like. `Interference Map` times out on its first
-two opens and then comes up — flakiness is fixture behaviour rather than
-something a backend would declare about itself, so it lives in the mock
-service and not in the catalog.
+All three kinds of failure are wired into the fixtures, so every branch of
+the failure screen is reachable:
+
+- `Unified Map (New)` — in the catalog's `failingModules` as `unavailable`,
+  and never opens. What an unprovisioned module looks like.
+- `Signalling Analytics` — in `failingModules` as `internal`, and fails on
+  every open with `NI-CORE-500`.
+- `Interference Map` — times out on its first two opens and then comes up.
+  Flakiness is not something a backend would declare about itself, so this
+  one lives in the mock service rather than in the catalog.
 
 **Accessibility.** The shell provides `header`, `nav` and `main` landmarks, a
 skip link, and one `h1` per view that names it — visually hidden, since the

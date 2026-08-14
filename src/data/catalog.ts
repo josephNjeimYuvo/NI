@@ -286,4 +286,5 @@ export const NORMAL_MODE_APPS: ApplicationId[] = ['ran', 'siteint', 'fault']
  */
 export const FAILING_MODULES: Record<string, ModuleFailureKind> = {
   'Unified Map (New)': 'unavailable',
+  'Signalling Analytics': 'internal',
 }

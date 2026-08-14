@@ -62,12 +62,18 @@ export function SplashMark({ progress }: { progress: number }) {
  *
  * The module's own catalog icon sits in the middle, so the picture is about
  * the thing that was clicked rather than a generic broken network. What
- * surrounds it carries the reason: signal arcs that never connect and a
- * dashed frame for a module that is not there yet, or intact arcs cut
- * through for one that should have answered and didn't.
+ * surrounds it carries the reason, and each reason is drawn differently
+ * enough to be told apart at a glance:
+ *
+ *   unavailable — dashed frame, arcs that never join: nothing is there yet
+ *   timeout     — everything intact, cut through: the link did not hold
+ *   internal    — arcs intact, the frame itself fractured: the network is
+ *                 fine and the module is what broke
  */
 export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFailureKind }) {
   const pending = kind === 'unavailable'
+  const severed = kind === 'timeout'
+  const cracked = kind === 'internal'
 
   return (
     <svg width={208} height={172} viewBox="0 0 208 172" aria-hidden="true">
@@ -125,7 +131,7 @@ export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFa
         <DuoIcon name={icon} size={24} weight={1.5} />
       </g>
 
-      {!pending && (
+      {severed && (
         <path
           d="M138 32L70 132"
           stroke="var(--crit)"
@@ -133,6 +139,29 @@ export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFa
           strokeLinecap="round"
           opacity={0.75}
         />
+      )}
+
+      {/* Twice over: a wide stroke in the panel's own fill splits the drawing
+          apart, and the thin one on top is the fracture running through it. */}
+      {cracked && (
+        <>
+          <path
+            d="M112 40 L96 74 L118 88 L102 124"
+            stroke="var(--card)"
+            strokeWidth={9}
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <path
+            d="M112 40 L96 74 L118 88 L102 124"
+            stroke="var(--crit)"
+            strokeWidth={3.2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            opacity={0.85}
+          />
+        </>
       )}
 
       <circle
@@ -147,7 +176,7 @@ export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFa
         transform="translate(140 108) scale(0.833)"
         style={{ color: pending ? 'var(--icon-accent)' : 'var(--crit)' }}
       >
-        <Icon name={pending ? 'clock' : 'alert'} size={24} weight={2} />
+        <Icon name={pending ? 'clock' : severed ? 'alert' : 'x'} size={24} weight={2} />
       </g>
     </svg>
   )

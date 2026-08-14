@@ -180,6 +180,7 @@ const mockModules = {
 const FAILURE_CODES: Record<ModuleFailureKind, string> = {
   unavailable: 'NI-MODULE-404',
   timeout: 'NI-GATEWAY-504',
+  internal: 'NI-CORE-500',
 }
 
 /**

@@ -106,16 +106,17 @@ export interface Tab {
 /**
  * Why a module did not open.
  *
- * The two are not variations on one message: a timeout is transient and
- * retrying is the right thing to do, whereas a module that is not provisioned
- * will fail identically every time and needs a different way forward. Keeping
- * them apart is what stops the screen offering an action that cannot work.
+ * These are not variations on one message. Only one of the three is worth
+ * retrying, and each needs a different way forward — which is what stops the
+ * failure screen offering an action that cannot possibly work.
  */
 export type ModuleFailureKind =
   /** The module exists in the catalog but is not enabled for this tenant. */
   | 'unavailable'
   /** The module should work; the request did not come back in time. */
   | 'timeout'
+  /** The module answered, and what it answered with was a fault of its own. */
+  | 'internal'
 
 export interface ModuleFailure {
   kind: ModuleFailureKind

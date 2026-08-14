@@ -24,31 +24,56 @@ function cooldownFor(failedAttempts: number): number {
   return Math.min(30, 5 * (failedAttempts - 1)) * 1000
 }
 
+/** What the primary button on the failure screen does. */
+type PrimaryAction = 'request-access' | 'retry' | 'report'
+
 /**
- * Wording per failure kind.
+ * Wording and the one action that follows from it, per failure kind.
  *
- * A module that is not provisioned and a service that timed out are different
- * events, and the difference is not decoration: one is worth retrying and the
- * other never will be. Keeping the copy in one table makes the pairing of
- * words to actions visible in a single place.
+ * A module that is not provisioned, a service that timed out and a module
+ * that crashed on the way up are three different events, and the difference
+ * is not decoration: only one of them is worth retrying. Keeping copy and
+ * action in one table makes that pairing visible in a single place, rather
+ * than spread across the branches that render it.
  */
 const COPY: Record<
   ModuleFailureKind,
-  { status: string; title: (name: string) => string; body: (app: string) => string }
+  {
+    status: string
+    /** Neutral for something that has not shipped; critical for a fault. */
+    tone: 'pending' | 'critical'
+    title: (name: string) => string
+    body: (app: string) => string
+    action: PrimaryAction
+  }
 > = {
   unavailable: {
     status: 'Not available yet',
+    tone: 'pending',
     title: (name) => `${name} isn't available yet`,
     body: (app) =>
       `This module is still in preview and hasn't been enabled for your tenant, so it won't open ` +
       `on this account. Nothing else is affected — the rest of ${app} is working normally.`,
+    action: 'request-access',
   },
   timeout: {
     status: 'Service timed out',
+    tone: 'critical',
     title: (name) => `${name} couldn't be loaded`,
     body: () =>
       `The analytics service didn't respond in time. Your session is still active and every other ` +
       `module is unaffected, so this is worth another try.`,
+    action: 'retry',
+  },
+  internal: {
+    status: 'Internal error',
+    tone: 'critical',
+    title: (name) => `${name} failed to start`,
+    body: (app) =>
+      `The module answered with an internal error, so it stopped before it could open. This one is ` +
+      `on us, not on anything you did, and it has already been logged. Retrying won't clear it — ` +
+      `the rest of ${app} is unaffected in the meantime.`,
+    action: 'report',
   },
 }
 
@@ -60,27 +85,34 @@ const UNDESCRIBED: ModuleFailure = {
   at: 0,
 }
 
+/** Badge and status-pill glyph per kind. */
+const STATUS_ICONS: Record<ModuleFailureKind, string> = {
+  unavailable: 'clock',
+  timeout: 'alert',
+  internal: 'x',
+}
+
 /**
  * Failure screen for a module that did not open.
  *
  * What it offers follows the kind of failure. A timeout gets Retry, backing
- * off once it has already been tried; an unprovisioned module gets a request
- * for access instead, because retrying it would fail in exactly the same way
- * every time. Both get somewhere else to go, since a dead end that only
- * offers the way back is a dead end.
+ * off once it has already been tried. An unprovisioned module gets a request
+ * for access, and one that crashed on the way up gets its diagnostics handed
+ * to the service desk — retrying either would fail in exactly the same way.
+ * All three get somewhere else to go, since a dead end that only offers the
+ * way back is still a dead end.
  */
 export function ModuleError({ tab }: { tab: Tab }) {
   const { catalog, workspace, tabs, toast, goHome, openModule } = useAppState()
 
   const failure = tab.failure ?? UNDESCRIBED
-  const pending = failure.kind === 'unavailable'
   const copy = COPY[failure.kind]
 
   const application = applicationOfModule(catalog, tab.id)
   const icon = MODULE_ICONS[tab.id] ?? application.icon
   const alternatives = siblingModules(catalog, tab.id, ALTERNATIVE_LIMIT)
 
-  const [requested, setRequested] = useState(false)
+  const [handled, setHandled] = useState(false)
   const cooldown = useCooldown(failure.at + cooldownFor(tab.failedAttempts))
 
   const diagnostics = [
@@ -92,8 +124,16 @@ export function ModuleError({ tab }: { tab: Tab }) {
   ].join('\n')
 
   const requestAccess = () => {
-    setRequested(true)
+    setHandled(true)
     toast.show(`Access requested for ${tab.label}`)
+  }
+
+  // Reporting hands over the diagnostics as well as raising it, so the
+  // details are already on the clipboard when the service desk asks.
+  const report = () => {
+    setHandled(true)
+    workspace.copyToClipboard(diagnostics)
+    toast.show(`Reported — diagnostics copied, quote ${failure.code}`)
   }
 
   return (
@@ -101,8 +141,10 @@ export function ModuleError({ tab }: { tab: Tab }) {
       <div className="ni-error__body">
         <ModuleFailureMark icon={icon} kind={failure.kind} />
 
-        <div className={`ni-error__status${pending ? ' ni-error__status--pending' : ''}`}>
-          <Icon name={pending ? 'clock' : 'alert'} size={13} />
+        <div
+          className={`ni-error__status${copy.tone === 'pending' ? ' ni-error__status--pending' : ''}`}
+        >
+          <Icon name={STATUS_ICONS[failure.kind]} size={13} />
           {copy.status}
         </div>
 
@@ -110,17 +152,7 @@ export function ModuleError({ tab }: { tab: Tab }) {
         <p className="ni-error__text">{copy.body(application.short ?? application.label)}</p>
 
         <div className="ni-error__actions">
-          {pending ? (
-            <button
-              type="button"
-              className="ni-button-primary"
-              onClick={requestAccess}
-              disabled={requested}
-            >
-              <Icon name={requested ? 'check' : 'shield'} size={15} />
-              {requested ? 'Request sent' : 'Request access'}
-            </button>
-          ) : (
+          {copy.action === 'retry' && (
             <button
               type="button"
               className="ni-button-primary"
@@ -131,13 +163,35 @@ export function ModuleError({ tab }: { tab: Tab }) {
               {cooldown > 0 ? `Retry in ${cooldown}s` : 'Retry'}
             </button>
           )}
+          {copy.action === 'request-access' && (
+            <button
+              type="button"
+              className="ni-button-primary"
+              onClick={requestAccess}
+              disabled={handled}
+            >
+              <Icon name={handled ? 'check' : 'shield'} size={15} />
+              {handled ? 'Request sent' : 'Request access'}
+            </button>
+          )}
+          {copy.action === 'report' && (
+            <button
+              type="button"
+              className="ni-button-primary"
+              onClick={report}
+              disabled={handled}
+            >
+              <Icon name={handled ? 'check' : 'share'} size={15} />
+              {handled ? 'Reported' : 'Report to service desk'}
+            </button>
+          )}
           <button type="button" className="ni-button-secondary" onClick={goHome}>
             <Icon name="grid" size={15} />
             Back to Main menu
           </button>
         </div>
 
-        {!pending && tab.failedAttempts > 1 && (
+        {copy.action === 'retry' && tab.failedAttempts > 1 && (
           <div className="ni-error__attempts">
             Failed {tab.failedAttempts} times in a row. If the next attempt fails too, raise it with
             the service desk rather than retrying again.
