@@ -38,14 +38,24 @@
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
+  /* Optically centred rather than measured: a block of text under a picture
+     reads as sitting low when it is centred exactly, so it is lifted. */
+  padding: 32px 32px max(32px, 7vh) 32px;
+  overflow-y: auto;
   animation: niFade 0.24s ease;
 }
 
+/**
+ * Wide enough for the alternatives to sit in a row; the prose inside is held
+ * narrower, because a 640px measure is uncomfortable to read.
+ *
+ * Centred by auto margins rather than by the parent's `align-items`, which
+ * clips the top of an overflowing child and leaves it unreachable — visible
+ * the moment the technical details are open on a short viewport.
+ */
 .ni-error__body {
-  max-width: 440px;
+  margin: auto;
+  max-width: 640px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,22 +63,144 @@
   gap: 8px;
 }
 
+.ni-error__status {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 11px 0 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--critRGB), 0.28);
+  background: rgba(var(--critRGB), 0.09);
+  color: var(--crit);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/**
+ * A module that has not shipped yet is not a fault, and colouring it like one
+ * tells the user something untrue about their network.
+ *
+ * Neutral rather than brand-coloured, because the brand palette is itself red
+ * in one of the three themes — where a brand-tinted pill would read as the
+ * alarm it is meant to be distinguished from. Only the icon takes the accent,
+ * which is held constant across brands for exactly this reason.
+ */
+.ni-error__status--pending {
+  border-color: var(--bd);
+  background: var(--inp);
+  color: var(--sec);
+}
+
+.ni-error__status--pending svg {
+  color: var(--icon-accent);
+}
+
 .ni-error__title {
-  margin-top: 12px;
-  font-size: 18px;
+  margin: 4px 0 0 0;
+  max-width: 560px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .ni-error__text {
+  margin: 0;
+  max-width: 470px;
   font-size: 13px;
   line-height: 1.65;
   color: var(--mut);
   text-wrap: pretty;
 }
 
+.ni-error__attempts {
+  max-width: 400px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--crit);
+}
+
+/* ---------------------------------------------------- alternative modules -- */
+
+.ni-error__alternatives {
+  margin-top: 22px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--bd);
+}
+
+.ni-error__alternativesLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.ni-error__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ni-error__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 17px;
+  border: 1px solid var(--bd);
+  background: var(--card);
+  color: var(--txt);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.ni-error__chip:hover {
+  background: var(--hov);
+  border-color: var(--acc2);
+}
+
+.ni-error__chipArrow {
+  display: flex;
+  color: var(--dim);
+  transition: transform 0.16s ease, color 0.16s ease;
+}
+
+.ni-error__chip:hover .ni-error__chipArrow {
+  color: var(--cyan2);
+  transform: translateX(2px);
+}
+
+.ni-error__support {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dim);
+  text-align: left;
+}
+
+.ni-error__support strong {
+  color: var(--mut);
+  font-weight: 700;
+}
+
 .ni-error__disclose {
-  margin-top: 12px;
+  margin-top: 18px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -92,6 +224,7 @@
 
 .ni-error__details {
   width: 100%;
+  max-width: 470px;
   text-align: left;
   border: 1px solid var(--bd);
   border-radius: 10px;
@@ -105,17 +238,25 @@
 
 .ni-error__detailRow {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   font-size: 12px;
 }
 
-.ni-error__detailRow span:first-child {
+/* An icon per row, so a value can be found by shape while it is being read
+   out over the phone. */
+.ni-error__detailLabel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   color: var(--mut);
 }
 
-.ni-error__detailRow span:last-child {
+.ni-error__detailValue {
   font-family: ui-monospace, monospace;
+  text-align: right;
+  word-break: break-all;
 }
 
 .ni-error__copy {
@@ -140,14 +281,19 @@
 }
 
 .ni-error__actions {
-  margin-top: 16px;
+  margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
 }
 
 .ni-button-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 38px;
-  padding: 0 20px;
+  padding: 0 18px;
   border: none;
   border-radius: 8px;
   background: linear-gradient(90deg, var(--cyan2), var(--blue));
@@ -158,13 +304,24 @@
   box-shadow: 0 8px 20px rgba(var(--brRGB), 0.24);
 }
 
-.ni-button-primary:hover {
+.ni-button-primary:hover:not(:disabled) {
   filter: brightness(1.08);
 }
 
+.ni-button-primary:disabled {
+  background: var(--inp);
+  border: 1px solid var(--bd);
+  color: var(--dim);
+  box-shadow: none;
+  cursor: default;
+}
+
 .ni-button-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 38px;
-  padding: 0 20px;
+  padding: 0 18px;
   border: 1px solid var(--bd);
   border-radius: 8px;
   background: transparent;

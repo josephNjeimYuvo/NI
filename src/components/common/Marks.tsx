@@ -1,4 +1,6 @@
+import { DuoIcon, Icon } from '@/lib/icons'
 import { MARK_PATH } from '@/lib/logo'
+import type { ModuleFailureKind } from '@/types'
 
 /**
  * Illustrative marks for loading and empty states. Each is hand-drawn rather
@@ -55,44 +57,98 @@ export function SplashMark({ progress }: { progress: number }) {
   )
 }
 
-/** A severed network graph, for the module load failure screen. */
-export function BrokenMark() {
+/**
+ * The module that would not open, for the failure screen.
+ *
+ * The module's own catalog icon sits in the middle, so the picture is about
+ * the thing that was clicked rather than a generic broken network. What
+ * surrounds it carries the reason: signal arcs that never connect and a
+ * dashed frame for a module that is not there yet, or intact arcs cut
+ * through for one that should have answered and didn't.
+ */
+export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFailureKind }) {
+  const pending = kind === 'unavailable'
+
   return (
-    <svg width={96} height={64} viewBox="0 0 96 64" aria-hidden="true">
-      <path
-        d="M30 50a18 18 0 0 1 12-16.6"
-        stroke="currentColor"
-        strokeWidth={4.5}
+    <svg width={208} height={172} viewBox="0 0 208 172" aria-hidden="true">
+      <defs>
+        {/* A wash rather than a flat field, so the mark sits in something
+            instead of floating on an empty page. */}
+        <radialGradient id="ni-failure-wash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="var(--icon-accent)" stopOpacity={0.17} />
+          <stop offset="0.6" stopColor="var(--icon-accent)" stopOpacity={0.05} />
+          <stop offset="1" stopColor="var(--icon-accent)" stopOpacity={0} />
+        </radialGradient>
+      </defs>
+
+      <circle cx={104} cy={82} r={86} fill="url(#ni-failure-wash)" />
+
+      <g
+        stroke="var(--icon-accent)"
+        strokeWidth={4}
         strokeLinecap="round"
         fill="none"
-        opacity={0.35}
-      />
-      <path
-        d="M66 50a18 18 0 0 0-11-16.4"
-        stroke="currentColor"
-        strokeWidth={4.5}
+        opacity={pending ? 0.45 : 0.55}
+        strokeDasharray={pending ? '2 11' : undefined}
+      >
+        <path d="M40 122a64 64 0 0 1 0-80" />
+        <path d="M168 42a64 64 0 0 1 0 80" />
+      </g>
+      <g
+        stroke="var(--icon-primary)"
+        strokeWidth={4}
         strokeLinecap="round"
         fill="none"
-        opacity={0.35}
+        opacity={pending ? 0.22 : 0.3}
+        strokeDasharray={pending ? '2 11' : undefined}
+      >
+        <path d="M58 110a46 46 0 0 1 0-56" />
+        <path d="M150 54a46 46 0 0 1 0 56" />
+      </g>
+
+      <rect
+        x={64}
+        y={42}
+        width={80}
+        height={80}
+        rx={19}
+        fill="var(--card)"
+        stroke="var(--icon-primary)"
+        strokeWidth={2}
+        strokeDasharray={pending ? '7 7' : undefined}
+        opacity={0.9}
       />
-      <path
-        d="M14 34a38 38 0 0 1 21-19"
-        stroke="currentColor"
-        strokeWidth={4.5}
-        strokeLinecap="round"
-        fill="none"
-        opacity={0.18}
+
+      {/* Scaled rather than redrawn: the icon keeps the two-tone treatment it
+          has everywhere else the module is listed. */}
+      <g transform="translate(80 58) scale(2)">
+        <DuoIcon name={icon} size={24} weight={1.5} />
+      </g>
+
+      {!pending && (
+        <path
+          d="M138 32L70 132"
+          stroke="var(--crit)"
+          strokeWidth={4}
+          strokeLinecap="round"
+          opacity={0.75}
+        />
+      )}
+
+      <circle
+        cx={150}
+        cy={118}
+        r={18}
+        fill="var(--card)"
+        stroke="var(--bd)"
+        strokeWidth={1.5}
       />
-      <path
-        d="M82 34a38 38 0 0 0-20-18.8"
-        stroke="currentColor"
-        strokeWidth={4.5}
-        strokeLinecap="round"
-        fill="none"
-        opacity={0.18}
-      />
-      <circle cx={48} cy={54} r={6} fill="var(--crit)" opacity={0.8} />
-      <path d="M60 6L36 60" stroke="var(--crit)" strokeWidth={3} strokeLinecap="round" opacity={0.55} />
+      <g
+        transform="translate(140 108) scale(0.833)"
+        style={{ color: pending ? 'var(--icon-accent)' : 'var(--crit)' }}
+      >
+        <Icon name={pending ? 'clock' : 'alert'} size={24} weight={2} />
+      </g>
     </svg>
   )
 }

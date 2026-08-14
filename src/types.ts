@@ -66,8 +66,11 @@ export interface Catalog {
   navigation: Record<ApplicationId, NavigationTree>
   /** Applications visible while in `Normal` mode. */
   normalModeApps: ApplicationId[]
-  /** Modules that fail to load — used to exercise the error path. */
-  failingModules: string[]
+  /**
+   * Modules known not to open, and why. Anything absent is expected to work,
+   * so a failure on one of those is transient by definition.
+   */
+  failingModules: Record<string, ModuleFailureKind>
 }
 
 export type NotificationSeverity = 'critical' | 'warning' | 'info'
@@ -94,6 +97,37 @@ export interface Tab {
   /** Owning application's display name, shown in the breadcrumb. */
   app: string
   status: TabStatus
+  /** Why the last open failed. Present only while `status` is `error`. */
+  failure?: ModuleFailure
+  /** Consecutive failed opens, reset the moment the module comes up. */
+  failedAttempts: number
+}
+
+/**
+ * Why a module did not open.
+ *
+ * The two are not variations on one message: a timeout is transient and
+ * retrying is the right thing to do, whereas a module that is not provisioned
+ * will fail identically every time and needs a different way forward. Keeping
+ * them apart is what stops the screen offering an action that cannot work.
+ */
+export type ModuleFailureKind =
+  /** The module exists in the catalog but is not enabled for this tenant. */
+  | 'unavailable'
+  /** The module should work; the request did not come back in time. */
+  | 'timeout'
+
+export interface ModuleFailure {
+  kind: ModuleFailureKind
+  /** Support-facing code, quoted on the failure screen. */
+  code: string
+  /**
+   * Stable for a given module, so a recurring failure carries one ID that
+   * support can search for rather than a fresh one per attempt.
+   */
+  correlationId: string
+  /** When the failure was observed, epoch ms. */
+  at: number
 }
 
 /** A module the user opened, with when they opened it. */
@@ -106,6 +140,8 @@ export interface RecentEntry {
 export interface ModuleLoadResult {
   name: string
   status: Extract<TabStatus, 'ready' | 'error'>
+  /** Present when `status` is `error`, describing what went wrong. */
+  failure?: ModuleFailure
 }
 
 /** Grid aggregation level. */

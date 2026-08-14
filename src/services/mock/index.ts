@@ -22,6 +22,8 @@ import type {
   Catalog,
   Credentials,
   ModuleDataFilter,
+  ModuleFailure,
+  ModuleFailureKind,
   ModuleLoadResult,
   ModuleWorkspaceData,
   Session,
@@ -35,6 +37,23 @@ const MODULE_LOAD_MS = 1500
 
 /** How often load progress is reported, in ms. */
 const PROGRESS_TICK_MS = 60
+
+/**
+ * Modules that time out transiently, and how many opens they fail before
+ * coming up. Unlike the catalog's `failingModules` this is not something a
+ * backend would ever declare about itself — it lives here because it is
+ * fixture behaviour, standing in for a service that is briefly unwell.
+ *
+ * Two failures rather than one, so the failure screen's back-off is
+ * reachable: the first retry is free, the second is held briefly, and the
+ * third succeeds.
+ */
+const FLAKY_MODULES: Record<string, number> = {
+  'Interference Map': 2,
+}
+
+/** Opens spent against each flaky module's budget, for this page load. */
+const flakyOpens = new Map<string, number>()
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -96,7 +115,17 @@ const mockModules = {
     }
     onProgress?.(100)
 
-    return { name, status: FAILING_MODULES.includes(name) ? 'error' : 'ready' }
+    const kind = FAILING_MODULES[name]
+    if (kind) return { name, status: 'error', failure: describeFailure(name, kind) }
+
+    const budget = FLAKY_MODULES[name] ?? 0
+    const spent = flakyOpens.get(name) ?? 0
+    if (spent < budget) {
+      flakyOpens.set(name, spent + 1)
+      return { name, status: 'error', failure: describeFailure(name, 'timeout') }
+    }
+
+    return { name, status: 'ready' }
   },
 
   async getWorkspaceData(filter: ModuleDataFilter): Promise<ModuleWorkspaceData> {
@@ -145,6 +174,33 @@ const mockModules = {
     }
     return buildTrend(metric)
   },
+}
+
+/** Support-facing code per failure kind. */
+const FAILURE_CODES: Record<ModuleFailureKind, string> = {
+  unavailable: 'NI-MODULE-404',
+  timeout: 'NI-GATEWAY-504',
+}
+
+/**
+ * Builds the failure record the error screen reads.
+ *
+ * The correlation ID is derived from the module name rather than generated,
+ * so a module that keeps failing keeps one ID — support can search for a
+ * recurring problem instead of chasing a new ID per attempt. A real backend
+ * would send the ID its own tracing assigned.
+ */
+function describeFailure(name: string, kind: ModuleFailureKind): ModuleFailure {
+  let hash = 0
+  for (const character of name) hash = (hash * 31 + character.charCodeAt(0)) >>> 0
+  const hex = hash.toString(16).padStart(8, '0')
+
+  return {
+    kind,
+    code: FAILURE_CODES[kind],
+    correlationId: `${hex.slice(0, 4)}-${hex.slice(4)}-${(name.length * 977).toString(16)}`,
+    at: Date.now(),
+  }
 }
 
 /** Sorts a copy of the rows by the requested column, leaving order stable. */

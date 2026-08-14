@@ -31,6 +31,47 @@ export function applicationOfModule(catalog: Catalog, moduleName: string): Appli
   return catalog.applications[0]!
 }
 
+/** Words too generic to signal that two modules are related. */
+const UNINFORMATIVE = new Set(['new', 'the', 'and', 'of', 'for'])
+
+/** Significant lowercase words in a module name. */
+function significantWords(name: string): string[] {
+  return name
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word.length > 2 && !UNINFORMATIVE.has(word))
+}
+
+/**
+ * Openable modules sitting alongside the named one, for offering a way
+ * forward when it will not open.
+ *
+ * Grouping modules are replaced by their children, since only children are
+ * openable, and anything the catalog already knows to be broken is left out —
+ * a dead end that recommends another dead end is worse than no suggestion.
+ *
+ * Ordering puts modules that share a word with the failing one first. It is a
+ * crude measure of relatedness, but catalog order alone answers "Unified Map
+ * is unavailable" with three performance modules, when the other maps are
+ * sitting right there.
+ */
+export function siblingModules(catalog: Catalog, moduleName: string, limit: number): string[] {
+  const app = applicationOfModule(catalog, moduleName)
+  const words = new Set(significantWords(moduleName))
+
+  return app.modules
+    .flatMap((module) => module.children ?? [module.label])
+    .filter((name) => name !== moduleName && !(name in catalog.failingModules))
+    .map((name, index) => ({
+      name,
+      index,
+      shared: significantWords(name).filter((word) => words.has(word)).length,
+    }))
+    .sort((a, b) => b.shared - a.shared || a.index - b.index)
+    .slice(0, limit)
+    .map((entry) => entry.name)
+}
+
 /** True when the module exists anywhere in the supplied applications. */
 export function moduleExists(applications: Application[], moduleName: string): boolean {
   return applications.some((app) =>

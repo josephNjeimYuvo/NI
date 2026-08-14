@@ -71,7 +71,7 @@ export function AppShell() {
           {tab?.status === 'loading' && (
             <SplashLoader name={tab.label} progress={tabs.progress} />
           )}
-          {tab?.status === 'error' && <ModuleError moduleName={tab.id} />}
+          {tab?.status === 'error' && <ModuleError tab={tab} />}
           {tab?.status === 'ready' && <ModuleWorkspace moduleName={tab.label} />}
         </main>
       </div>

@@ -60,13 +60,23 @@ export function useTabs(catalog: Catalog | null): TabsState {
 
       const owningApp = applicationOfModule(catalog, moduleName).label
       setBook((current) => ({
+        // Re-opening drops the previous failure: the screen behind the splash
+        // must not still be describing the attempt before this one.
         tabs: current.tabs.some((tab) => tab.id === moduleName)
           ? current.tabs.map((tab) =>
-              tab.id === moduleName ? { ...tab, status: 'loading' as const } : tab,
+              tab.id === moduleName
+                ? { ...tab, status: 'loading' as const, failure: undefined }
+                : tab,
             )
           : [
               ...current.tabs,
-              { id: moduleName, label: moduleName, app: owningApp, status: 'loading' as const },
+              {
+                id: moduleName,
+                label: moduleName,
+                app: owningApp,
+                status: 'loading' as const,
+                failedAttempts: 0,
+              },
             ],
         activeId: moduleName,
       }))
@@ -81,9 +91,19 @@ export function useTabs(catalog: Catalog | null): TabsState {
           if (!mounted.current || loadToken.current !== token) return
           setBook((current) => ({
             ...current,
-            tabs: current.tabs.map((tab) =>
-              tab.id === moduleName ? { ...tab, status: result.status } : tab,
-            ),
+            tabs: current.tabs.map((tab) => {
+              if (tab.id !== moduleName) return tab
+              const failed = result.status === 'error'
+              return {
+                ...tab,
+                status: result.status,
+                failure: result.failure,
+                // Counts consecutive failures, so the error screen can back
+                // off a retry that has already been tried. Coming up clears
+                // it — the next failure starts a fresh run.
+                failedAttempts: failed ? tab.failedAttempts + 1 : 0,
+              }
+            }),
           }))
         })
     },

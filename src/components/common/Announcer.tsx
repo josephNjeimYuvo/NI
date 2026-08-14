@@ -17,6 +17,7 @@ export function Announcer() {
   const tab = tabs.activeTab
   const status = tab?.status
   const label = tab?.label
+  const failure = tab?.failure?.kind
 
   useEffect(() => {
     if (!label) {
@@ -24,9 +25,17 @@ export function Announcer() {
       return
     }
     if (status === 'loading') setMessage(`Loading ${label}`)
-    else if (status === 'error') setMessage(`${label} could not be loaded`)
-    else if (status === 'ready') setMessage(`${label} ready`)
-  }, [label, status])
+    else if (status === 'error') {
+      // Matched to what is on screen: announcing a load failure for a module
+      // that was never available would send a screen-reader user off to retry
+      // something that cannot work.
+      setMessage(
+        failure === 'unavailable'
+          ? `${label} is not available yet`
+          : `${label} could not be loaded`,
+      )
+    } else if (status === 'ready') setMessage(`${label} ready`)
+  }, [label, status, failure])
 
   useEffect(() => {
     if (toast.message) setMessage(toast.message)

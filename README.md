@@ -35,7 +35,10 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
   submodules, with arrow-key navigation.
 - **Module workspace** with a multi-select site picker, metric picker,
   sortable and paged parameter-audit grid, KPI tiles, a metric sparkline, and
-  dedicated loading, error and empty states.
+  dedicated loading and empty states.
+- **Failure screens** that distinguish a module which is not provisioned from
+  one whose service timed out, and offer only the actions that can actually
+  work.
 - **Notifications** slide-over.
 - **Accessible by structure**: landmarks, a heading outline, a skip link,
   live-region announcements and a roving-tabindex tab strip.
@@ -103,6 +106,36 @@ room at all and no tab is reachable. At 800px with the sidebar *expanded*
 the track is still too narrow for a full tab — collapsing the sidebar, or
 the overflow menu, covers that case.
 
+**Failure screens.** A module that will not open fails for one of two
+reasons, and `ModuleError` treats them as different events rather than as one
+message with different words:
+
+| | not provisioned | timed out |
+| --- | --- | --- |
+| Catalog | listed in `failingModules` | absent — expected to work |
+| Illustration | dashed frame, unconnected arcs, clock | intact frame, cut through, alarm |
+| Primary action | Request access | Retry |
+| Repeats? | every time | probably not |
+
+The distinction matters because the screen used to present everything as a
+gateway timeout with Retry as its primary button. `Unified Map (New)` is in
+`failingModules` and so fails identically on every attempt — the one action
+on offer was the one that could never succeed.
+
+Both screens draw the module's own catalog icon, in the same two tones it
+carries everywhere else, so the picture is about the thing that was clicked.
+Both suggest openable modules from the same application, preferring ones that
+share a word with the failing module and never suggesting another module the
+catalog already knows to be broken. Both offer the service desk, and one
+`Copy diagnostics` button covering the module, code, correlation ID and
+timestamp together — support asks for all four, and reading them off a screen
+is where transcription errors come from.
+
+Retry is free the first time, since a timeout often clears by itself. From
+the second consecutive failure it holds for a growing interval and the screen
+says how many attempts have failed, because a button that fails identically
+three times running is worse than no button at all.
+
 **Styling.** Every colour resolves through the custom properties in
 `styles/tokens.css`. Appearance is set by two independent attributes on the
 document element, so one paint re-themes the whole app:
@@ -142,6 +175,13 @@ is answering and none of the UI changes when it is. `getTrend` rejects with
 `TrendUnavailableError` for designated modules, which is how the workspace
 demonstrates a partially-degraded screen without pretending the whole app is
 broken.
+
+Two kinds of failure are wired into the fixtures. `Unified Map (New)` is in
+the catalog's `failingModules` and never opens, which is what a real
+unprovisioned module looks like. `Interference Map` times out on its first
+two opens and then comes up — flakiness is fixture behaviour rather than
+something a backend would declare about itself, so it lives in the mock
+service and not in the catalog.
 
 **Accessibility.** The shell provides `header`, `nav` and `main` landmarks, a
 skip link, and one `h1` per view that names it — visually hidden, since the

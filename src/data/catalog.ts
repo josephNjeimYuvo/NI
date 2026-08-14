@@ -1,4 +1,9 @@
-import type { Application, ApplicationId, NavigationTree } from '@/types'
+import type {
+  Application,
+  ApplicationId,
+  ModuleFailureKind,
+  NavigationTree,
+} from '@/types'
 
 /**
  * The application catalog.
@@ -268,5 +273,17 @@ export const MODULE_ICONS: Record<string, string> = {
 /** Applications that stay visible when the catalog is in `Normal` mode. */
 export const NORMAL_MODE_APPS: ApplicationId[] = ['ran', 'siteint', 'fault']
 
-/** Modules wired to fail on open, so the error path stays exercised. */
-export const FAILING_MODULES: string[] = ['Unified Map (New)']
+/**
+ * Modules known not to open, and why.
+ *
+ * Unified Map ships as a preview: it is in the catalog so it can be found,
+ * but it is not provisioned, so it fails every single time. Presenting that
+ * as a timeout would be a lie — and would put a Retry button on screen that
+ * can never succeed.
+ *
+ * Anything absent from this table is expected to work. When one of those
+ * fails anyway the cause is transient, which is the case Retry is for.
+ */
+export const FAILING_MODULES: Record<string, ModuleFailureKind> = {
+  'Unified Map (New)': 'unavailable',
+}
