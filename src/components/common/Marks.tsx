@@ -1,4 +1,4 @@
-import { DuoIcon, Icon } from '@/lib/icons'
+import { Icon } from '@/lib/icons'
 import { MARK_PATH } from '@/lib/logo'
 import type { ModuleFailureKind } from '@/types'
 
@@ -58,125 +58,107 @@ export function SplashMark({ progress }: { progress: number }) {
 }
 
 /**
- * The module that would not open, for the failure screen.
+ * How each failure kind marks up the logo, and what its badge shows.
  *
- * The module's own catalog icon sits in the middle, so the picture is about
- * the thing that was clicked rather than a generic broken network. What
- * surrounds it carries the reason, and each reason is drawn differently
- * enough to be told apart at a glance:
- *
- *   unavailable — dashed frame, arcs that never join: nothing is there yet
- *   timeout     — everything intact, cut through: the link did not hold
- *   internal    — arcs intact, the frame itself fractured: the network is
- *                 fine and the module is what broke
+ * `fill` and `outline` are tuned against each other rather than set from one
+ * scale: a dashed outline reads lighter than a solid one at the same opacity,
+ * so it is carried a little stronger to keep the three marks the same weight
+ * on the page.
  */
-export function ModuleFailureMark({ icon, kind }: { icon: string; kind: ModuleFailureKind }) {
-  const pending = kind === 'unavailable'
-  const severed = kind === 'timeout'
-  const cracked = kind === 'internal'
+const FAILURE_TREATMENT: Record<
+  ModuleFailureKind,
+  { badge: string; tone: string; fill: number; outline: number; dashed: boolean; scar?: string }
+> = {
+  // Only half filled in, because it is not all the way here yet.
+  unavailable: {
+    badge: 'clock',
+    tone: 'var(--icon-accent)',
+    fill: 0.035,
+    outline: 0.75,
+    dashed: true,
+  },
+  // One clean cut: what was there did not hold.
+  timeout: {
+    badge: 'alert',
+    tone: 'var(--crit)',
+    fill: 0.07,
+    outline: 0.55,
+    dashed: false,
+    scar: 'M34 2L10 38',
+  },
+  // A fracture rather than a cut: it broke rather than being severed.
+  internal: {
+    badge: 'x',
+    tone: 'var(--crit)',
+    fill: 0.07,
+    outline: 0.55,
+    dashed: false,
+    scar: 'M27 2 L20 15 L28 21 L18 38',
+  },
+}
+
+/**
+ * The Network Insight mark, for the failure screen.
+ *
+ * The logo rather than a drawing of the failure: at this size an illustration
+ * competes with the sentence underneath it, and the sentence is what the user
+ * actually needs. Held in muted greys so it reads as a watermark, with the
+ * only colour on the badge.
+ *
+ * Each kind still marks the same shape differently, so the three are
+ * distinguishable before a word is read — not drawn in yet, cut through, or
+ * fractured.
+ */
+export function ModuleFailureMark({ kind }: { kind: ModuleFailureKind }) {
+  const treatment = FAILURE_TREATMENT[kind]
 
   return (
-    <svg width={208} height={172} viewBox="0 0 208 172" aria-hidden="true">
-      <defs>
-        {/* A wash rather than a flat field, so the mark sits in something
-            instead of floating on an empty page. */}
-        <radialGradient id="ni-failure-wash" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="var(--icon-accent)" stopOpacity={0.17} />
-          <stop offset="0.6" stopColor="var(--icon-accent)" stopOpacity={0.05} />
-          <stop offset="1" stopColor="var(--icon-accent)" stopOpacity={0} />
-        </radialGradient>
-      </defs>
-
-      <circle cx={104} cy={82} r={86} fill="url(#ni-failure-wash)" />
-
-      <g
-        stroke="var(--icon-accent)"
-        strokeWidth={4}
-        strokeLinecap="round"
+    <svg width={132} height={120} viewBox="-2 -2 56 50" aria-hidden="true">
+      <path
+        d={MARK_PATH}
+        fillRule="evenodd"
+        clipRule="evenodd"
+        fill="var(--txt)"
+        opacity={treatment.fill}
+      />
+      <path
+        d={MARK_PATH}
+        fillRule="evenodd"
+        clipRule="evenodd"
         fill="none"
-        opacity={pending ? 0.45 : 0.55}
-        strokeDasharray={pending ? '2 11' : undefined}
-      >
-        <path d="M40 122a64 64 0 0 1 0-80" />
-        <path d="M168 42a64 64 0 0 1 0 80" />
-      </g>
-      <g
-        stroke="var(--icon-primary)"
-        strokeWidth={4}
-        strokeLinecap="round"
-        fill="none"
-        opacity={pending ? 0.22 : 0.3}
-        strokeDasharray={pending ? '2 11' : undefined}
-      >
-        <path d="M58 110a46 46 0 0 1 0-56" />
-        <path d="M150 54a46 46 0 0 1 0 56" />
-      </g>
-
-      <rect
-        x={64}
-        y={42}
-        width={80}
-        height={80}
-        rx={19}
-        fill="var(--card)"
-        stroke="var(--icon-primary)"
-        strokeWidth={2}
-        strokeDasharray={pending ? '7 7' : undefined}
-        opacity={0.9}
+        stroke="var(--dim)"
+        strokeWidth={0.8}
+        strokeLinejoin="round"
+        strokeDasharray={treatment.dashed ? '2 2.4' : undefined}
+        opacity={treatment.outline}
       />
 
-      {/* Scaled rather than redrawn: the icon keeps the two-tone treatment it
-          has everywhere else the module is listed. */}
-      <g transform="translate(80 58) scale(2)">
-        <DuoIcon name={icon} size={24} weight={1.5} />
-      </g>
-
-      {severed && (
-        <path
-          d="M138 32L70 132"
-          stroke="var(--crit)"
-          strokeWidth={4}
-          strokeLinecap="round"
-          opacity={0.75}
-        />
-      )}
-
-      {/* Twice over: a wide stroke in the panel's own fill splits the drawing
-          apart, and the thin one on top is the fracture running through it. */}
-      {cracked && (
+      {/* Twice over: a wide stroke in the page colour splits the mark apart,
+          and the thin one on top is what did the splitting. */}
+      {treatment.scar && (
         <>
           <path
-            d="M112 40 L96 74 L118 88 L102 124"
-            stroke="var(--card)"
-            strokeWidth={9}
+            d={treatment.scar}
+            stroke="var(--pg)"
+            strokeWidth={2.4}
             strokeLinejoin="round"
             fill="none"
           />
           <path
-            d="M112 40 L96 74 L118 88 L102 124"
-            stroke="var(--crit)"
-            strokeWidth={3.2}
+            d={treatment.scar}
+            stroke={treatment.tone}
+            strokeWidth={0.9}
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
-            opacity={0.85}
+            opacity={0.8}
           />
         </>
       )}
 
-      <circle
-        cx={150}
-        cy={118}
-        r={18}
-        fill="var(--card)"
-        stroke="var(--bd)"
-        strokeWidth={1.5}
-      />
-      <g
-        transform="translate(140 108) scale(0.833)"
-        style={{ color: pending ? 'var(--icon-accent)' : 'var(--crit)' }}
-      >
-        <Icon name={pending ? 'clock' : severed ? 'alert' : 'x'} size={24} weight={2} />
+      <circle cx={45} cy={35} r={8.5} fill="var(--pg)" stroke="var(--bd)" strokeWidth={1} />
+      <g transform="translate(39.5 29.5) scale(0.458)" style={{ color: treatment.tone }}>
+        <Icon name={treatment.badge} size={24} weight={2.2} />
       </g>
     </svg>
   )

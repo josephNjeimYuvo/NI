@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react'
 import { ModuleFailureMark } from '@/components/common/Marks'
-import { MODULE_ICONS } from '@/data/catalog'
-import { applicationOfModule, siblingModules } from '@/lib/catalog'
-import { DuoIcon, Icon } from '@/lib/icons'
+import { applicationOfModule } from '@/lib/catalog'
+import { Icon } from '@/lib/icons'
 import { useAppState } from '@/state/AppStateProvider'
 import type { ModuleFailure, ModuleFailureKind, Tab } from '@/types'
 import './ModuleView.css'
-
-/** Most alternative modules offered, so the row stays scannable. */
-const ALTERNATIVE_LIMIT = 3
 
 /**
  * Retry cooldown after `n` consecutive failures, in ms.
@@ -35,44 +31,27 @@ type PrimaryAction = 'request-access' | 'retry' | 'report'
  * is not decoration: only one of them is worth retrying. Keeping copy and
  * action in one table makes that pairing visible in a single place, rather
  * than spread across the branches that render it.
+ *
+ * One sentence each. Anything the user does not need in order to decide what
+ * to do next belongs in the technical details, not in the middle of the page.
  */
 const COPY: Record<
   ModuleFailureKind,
-  {
-    status: string
-    /** Neutral for something that has not shipped; critical for a fault. */
-    tone: 'pending' | 'critical'
-    title: (name: string) => string
-    body: (app: string) => string
-    action: PrimaryAction
-  }
+  { title: (name: string) => string; body: string; action: PrimaryAction }
 > = {
   unavailable: {
-    status: 'Not available yet',
-    tone: 'pending',
     title: (name) => `${name} isn't available yet`,
-    body: (app) =>
-      `This module is still in preview and hasn't been enabled for your tenant, so it won't open ` +
-      `on this account. Nothing else is affected — the rest of ${app} is working normally.`,
+    body: "It's still in preview and hasn't been enabled for your tenant.",
     action: 'request-access',
   },
   timeout: {
-    status: 'Service timed out',
-    tone: 'critical',
     title: (name) => `${name} couldn't be loaded`,
-    body: () =>
-      `The analytics service didn't respond in time. Your session is still active and every other ` +
-      `module is unaffected, so this is worth another try.`,
+    body: "The service didn't respond in time. Nothing else is affected.",
     action: 'retry',
   },
   internal: {
-    status: 'Internal error',
-    tone: 'critical',
     title: (name) => `${name} failed to start`,
-    body: (app) =>
-      `The module answered with an internal error, so it stopped before it could open. This one is ` +
-      `on us, not on anything you did, and it has already been logged. Retrying won't clear it — ` +
-      `the rest of ${app} is unaffected in the meantime.`,
+    body: "The module hit an internal error. It's been logged, and retrying won't clear it.",
     action: 'report',
   },
 }
@@ -85,32 +64,25 @@ const UNDESCRIBED: ModuleFailure = {
   at: 0,
 }
 
-/** Badge and status-pill glyph per kind. */
-const STATUS_ICONS: Record<ModuleFailureKind, string> = {
-  unavailable: 'clock',
-  timeout: 'alert',
-  internal: 'x',
-}
-
 /**
  * Failure screen for a module that did not open.
  *
- * What it offers follows the kind of failure. A timeout gets Retry, backing
- * off once it has already been tried. An unprovisioned module gets a request
- * for access, and one that crashed on the way up gets its diagnostics handed
- * to the service desk — retrying either would fail in exactly the same way.
- * All three get somewhere else to go, since a dead end that only offers the
- * way back is still a dead end.
+ * Four things on screen: what happened, in one sentence; the one action that
+ * can move it forward; the way back; and the diagnostics, folded away until
+ * somebody asks for them.
+ *
+ * Which action appears follows the kind of failure. A timeout gets Retry,
+ * backing off once it has already been tried. An unprovisioned module gets a
+ * request for access, and one that crashed on the way up gets its diagnostics
+ * handed to the service desk — retrying either would fail in exactly the same
+ * way every time.
  */
 export function ModuleError({ tab }: { tab: Tab }) {
-  const { catalog, workspace, tabs, toast, goHome, openModule } = useAppState()
+  const { catalog, workspace, tabs, toast, goHome } = useAppState()
 
   const failure = tab.failure ?? UNDESCRIBED
   const copy = COPY[failure.kind]
-
   const application = applicationOfModule(catalog, tab.id)
-  const icon = MODULE_ICONS[tab.id] ?? application.icon
-  const alternatives = siblingModules(catalog, tab.id, ALTERNATIVE_LIMIT)
 
   const [handled, setHandled] = useState(false)
   const cooldown = useCooldown(failure.at + cooldownFor(tab.failedAttempts))
@@ -139,17 +111,10 @@ export function ModuleError({ tab }: { tab: Tab }) {
   return (
     <div className="ni-error">
       <div className="ni-error__body">
-        <ModuleFailureMark icon={icon} kind={failure.kind} />
-
-        <div
-          className={`ni-error__status${copy.tone === 'pending' ? ' ni-error__status--pending' : ''}`}
-        >
-          <Icon name={STATUS_ICONS[failure.kind]} size={13} />
-          {copy.status}
-        </div>
+        <ModuleFailureMark kind={failure.kind} />
 
         <h2 className="ni-error__title">{copy.title(tab.label)}</h2>
-        <p className="ni-error__text">{copy.body(application.short ?? application.label)}</p>
+        <p className="ni-error__text">{copy.body}</p>
 
         <div className="ni-error__actions">
           {copy.action === 'retry' && (
@@ -191,35 +156,6 @@ export function ModuleError({ tab }: { tab: Tab }) {
           </button>
         </div>
 
-        {copy.action === 'retry' && tab.failedAttempts > 1 && (
-          <div className="ni-error__attempts">
-            Failed {tab.failedAttempts} times in a row. If the next attempt fails too, raise it with
-            the service desk rather than retrying again.
-          </div>
-        )}
-
-        {alternatives.length > 0 && (
-          <div className="ni-error__alternatives">
-            <span className="ni-error__alternativesLabel">Available now in {application.short ?? application.label}</span>
-            <div className="ni-error__chips">
-              {alternatives.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  className="ni-error__chip"
-                  onClick={() => openModule(name)}
-                >
-                  <DuoIcon name={MODULE_ICONS[name] ?? application.icon} size={15} />
-                  {name}
-                  <span className="ni-error__chipArrow">
-                    <Icon name="arrowR" size={13} />
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         <button
           type="button"
           className="ni-error__disclose"
@@ -257,16 +193,11 @@ export function ModuleError({ tab }: { tab: Tab }) {
               <Icon name={workspace.copied ? 'check' : 'copy'} size={13} />
               {workspace.copied ? 'Copied' : 'Copy diagnostics'}
             </button>
+            <div className="ni-error__support">
+              Service desk: <strong>x4400</strong>, or raise a ticket in ServiceNow.
+            </div>
           </div>
         )}
-
-        <div className="ni-error__support">
-          <Icon name="help" size={14} />
-          <span>
-            Still stuck? Call the service desk on <strong>x4400</strong> or raise a ticket in
-            ServiceNow.
-          </span>
-        </div>
       </div>
     </div>
   )

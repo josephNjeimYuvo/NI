@@ -46,16 +46,13 @@
 }
 
 /**
- * Wide enough for the alternatives to sit in a row; the prose inside is held
- * narrower, because a 640px measure is uncomfortable to read.
- *
  * Centred by auto margins rather than by the parent's `align-items`, which
  * clips the top of an overflowing child and leaves it unreachable — visible
  * the moment the technical details are open on a short viewport.
  */
 .ni-error__body {
   margin: auto;
-  max-width: 640px;
+  max-width: 470px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,45 +60,10 @@
   gap: 8px;
 }
 
-.ni-error__status {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 24px;
-  padding: 0 11px 0 9px;
-  border-radius: 12px;
-  border: 1px solid rgba(var(--critRGB), 0.28);
-  background: rgba(var(--critRGB), 0.09);
-  color: var(--crit);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-/**
- * A module that has not shipped yet is not a fault, and colouring it like one
- * tells the user something untrue about their network.
- *
- * Neutral rather than brand-coloured, because the brand palette is itself red
- * in one of the three themes — where a brand-tinted pill would read as the
- * alarm it is meant to be distinguished from. Only the icon takes the accent,
- * which is held constant across brands for exactly this reason.
- */
-.ni-error__status--pending {
-  border-color: var(--bd);
-  background: var(--inp);
-  color: var(--sec);
-}
-
-.ni-error__status--pending svg {
-  color: var(--icon-accent);
-}
-
 .ni-error__title {
-  margin: 4px 0 0 0;
+  margin: 14px 0 0 0;
   max-width: 560px;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -109,94 +71,11 @@
 
 .ni-error__text {
   margin: 0;
-  max-width: 470px;
+  max-width: 400px;
   font-size: 13px;
-  line-height: 1.65;
+  line-height: 1.6;
   color: var(--mut);
   text-wrap: pretty;
-}
-
-.ni-error__attempts {
-  max-width: 400px;
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--crit);
-}
-
-/* ---------------------------------------------------- alternative modules -- */
-
-.ni-error__alternatives {
-  margin-top: 22px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding-top: 20px;
-  border-top: 1px solid var(--bd);
-}
-
-.ni-error__alternativesLabel {
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.ni-error__chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.ni-error__chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 17px;
-  border: 1px solid var(--bd);
-  background: var(--card);
-  color: var(--txt);
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.16s ease, background 0.16s ease;
-}
-
-.ni-error__chip:hover {
-  background: var(--hov);
-  border-color: var(--acc2);
-}
-
-.ni-error__chipArrow {
-  display: flex;
-  color: var(--dim);
-  transition: transform 0.16s ease, color 0.16s ease;
-}
-
-.ni-error__chip:hover .ni-error__chipArrow {
-  color: var(--cyan2);
-  transform: translateX(2px);
-}
-
-.ni-error__support {
-  margin-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--dim);
-  text-align: left;
-}
-
-.ni-error__support strong {
-  color: var(--mut);
-  font-weight: 700;
 }
 
 .ni-error__disclose {
@@ -278,6 +157,22 @@
 
 .ni-error__copy:hover {
   background: var(--hov);
+}
+
+/* Folded in with the diagnostics rather than sitting on the page: someone
+   calling the service desk is already reading out the code beside it. */
+.ni-error__support {
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--bd);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.ni-error__support strong {
+  color: var(--mut);
+  font-weight: 700;
 }
 
 .ni-error__actions {

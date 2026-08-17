@@ -36,9 +36,9 @@ Sign-in accepts any non-empty email and password; the form is pre-filled.
 - **Module workspace** with a multi-select site picker, metric picker,
   sortable and paged parameter-audit grid, KPI tiles, a metric sparkline, and
   dedicated loading and empty states.
-- **Failure screens** that distinguish a module which is not provisioned from
-  one whose service timed out, and offer only the actions that can actually
-  work.
+- **Failure screens** that tell a module which is not provisioned apart from
+  one whose service timed out and one that crashed, and offer only the action
+  that can actually work.
 - **Notifications** slide-over.
 - **Accessible by structure**: landmarks, a heading outline, a skip link,
   live-region announcements and a roving-tabindex tab strip.
@@ -113,8 +113,8 @@ message with different words:
 | | not provisioned | timed out | internal error |
 | --- | --- | --- | --- |
 | Code | `NI-MODULE-404` | `NI-GATEWAY-504` | `NI-CORE-500` |
-| Illustration | dashed frame, unconnected arcs | intact, cut through | arcs intact, frame fractured |
-| Badge | clock, neutral | alarm, critical | cross, critical |
+| Mark | dashed, half filled | cut through | fractured |
+| Badge | clock, accent | alarm, critical | cross, critical |
 | Primary action | Request access | Retry | Report to service desk |
 | Repeats? | every time | probably not | every time |
 
@@ -124,19 +124,23 @@ reproduce on every attempt, so for those the one action on offer was the one
 that could never succeed. Only the timeout keeps Retry; the other two hand
 over the action that does move things forward.
 
-Both screens draw the module's own catalog icon, in the same two tones it
-carries everywhere else, so the picture is about the thing that was clicked.
-Both suggest openable modules from the same application, preferring ones that
-share a word with the failing module and never suggesting another module the
-catalog already knows to be broken. Both offer the service desk, and one
-`Copy diagnostics` button covering the module, code, correlation ID and
-timestamp together — support asks for all four, and reading them off a screen
-is where transcription errors come from.
+Four things are on screen: what happened in one sentence, the one action that
+moves it forward, the way back, and `Technical details` folded shut.
+Everything support needs — code, correlation ID, module, timestamp, a
+`Copy diagnostics` button and the service desk number — is inside that
+disclosure, because it matters to one caller in twenty and to nobody else
+reading the page.
+
+The illustration is the Network Insight mark itself, in muted greys rather
+than a drawing of the failure: at this size a picture competes with the
+sentence under it, and the sentence is the part that has to land. Each kind
+marks the same shape differently, so the three are distinguishable before a
+word is read.
 
 Retry is free the first time, since a timeout often clears by itself. From
-the second consecutive failure it holds for a growing interval and the screen
-says how many attempts have failed, because a button that fails identically
-three times running is worse than no button at all.
+the second consecutive failure the button holds for a growing interval and
+says so, because one that fails identically three times running is worse than
+no button at all.
 
 **Styling.** Every colour resolves through the custom properties in
 `styles/tokens.css`. Appearance is set by two independent attributes on the
