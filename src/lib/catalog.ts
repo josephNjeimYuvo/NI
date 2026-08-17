@@ -31,6 +31,22 @@ export function applicationOfModule(catalog: Catalog, moduleName: string): Appli
   return catalog.applications[0]!
 }
 
+/**
+ * The grouping module a module sits under, or `null` when it is top-level.
+ *
+ * Groupings are a real level of the catalog — `Trace Sessions` is reached by
+ * opening `Subscriber Trace` first — so anything describing where a module
+ * lives has to account for them.
+ */
+export function groupOfModule(catalog: Catalog, moduleName: string): string | null {
+  for (const app of catalog.applications) {
+    for (const module of app.modules) {
+      if (module.children?.includes(moduleName)) return module.label
+    }
+  }
+  return null
+}
+
 /** True when the module exists anywhere in the supplied applications. */
 export function moduleExists(applications: Application[], moduleName: string): boolean {
   return applications.some((app) =>

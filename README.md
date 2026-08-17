@@ -123,6 +123,25 @@ the first time they are selected.
 Signing out clears the session and the tab strip, so the next visitor to the
 browser gets the login screen and an empty workspace.
 
+**Breadcrumbs.** The trail follows the catalog's real depth, which is four
+levels for a module inside a grouping: `Network Insight › Core Analytics ›
+Subscriber Trace › Trace Sessions`. Skipping the grouping would describe a
+route that does not exist — `Trace Sessions` is only reachable by opening
+`Subscriber Trace` first — so the application crumb returns to the catalog
+with that application selected, and the grouping crumb returns with the group
+already expanded.
+
+Only crumbs that lead somewhere the user is not already are rendered as
+buttons. On the catalog itself there is nowhere further up, so both crumbs
+are plain text naming the location — previously it read `Network Insight ›
+Applications › Main menu`, three crumbs of which two were live-looking links
+that did nothing.
+
+When the trail runs out of room the intermediate crumbs abbreviate, while the
+root and the page you are actually on keep their names. Sharing the loss
+evenly truncated all four at once, which left the user reading
+"Network Insi…" — the one crumb short enough to never have needed it.
+
 **Tab strip.** `TabStrip` renders every open tab into a horizontally
 scrolling track that fills whatever width the top bar has left, so how many
 are on screen follows the viewport instead of a fixed cap. Arrows appear

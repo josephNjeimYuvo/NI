@@ -447,35 +447,57 @@
   font-size: 12.5px;
   white-space: nowrap;
   padding: 14px 24px 0;
+  /* A module inside a grouping makes four crumbs, which can outrun a narrow
+     content area. The trail clips rather than widening the shell. */
+  overflow: hidden;
 }
 
 .ni-crumbs__item {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+}
+
+/**
+ * Where the trail gives up its width first.
+ *
+ * The intermediate crumbs shrink; the root and the page you are actually on
+ * keep their full names. Sharing the loss evenly abbreviated all four at
+ * once, which left the user looking at "Network Insi…" — the one crumb short
+ * enough to never have needed it.
+ */
+.ni-crumbs__item:first-child,
+.ni-crumbs__item:last-child {
+  flex-shrink: 0;
 }
 
 .ni-crumbs__link {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: pointer;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--mut);
+  /* Long module names give up their tail before the trail does. */
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.ni-crumbs__link:hover {
+/* Only the crumbs that actually navigate respond to the pointer. A span here
+   is an ancestor the user is already standing on, not a dead link. */
+button.ni-crumbs__link {
+  cursor: pointer;
+}
+
+button.ni-crumbs__link:hover {
   color: var(--cyan2);
 }
 
 .ni-crumbs__link--current {
   font-weight: 700;
-  color: var(--txt);
-  cursor: default;
-}
-
-.ni-crumbs__link--current:hover {
   color: var(--txt);
 }
 

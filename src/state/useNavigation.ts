@@ -42,6 +42,8 @@ export interface NavigationState {
   /** Module card expanded on the main menu, if any. */
   expandedCard: string | null
   toggleCard: (label: string) => void
+  /** Expands a card outright, for arriving at one rather than toggling it. */
+  openCard: (label: string) => void
   clearExpandedCard: () => void
 
   collapsed: boolean
@@ -123,6 +125,8 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
     setExpandedCard((current) => (current === label ? null : label))
   }, [])
 
+  const openCard = useCallback((label: string) => setExpandedCard(label), [])
+
   const clearExpandedCard = useCallback(() => setExpandedCard(null), [])
 
   const toggleCategory = useCallback((id: ApplicationId) => {
@@ -185,6 +189,7 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
     selectApp,
     expandedCard,
     toggleCard,
+    openCard,
     clearExpandedCard,
     collapsed,
     toggleCollapsed,
