@@ -63,15 +63,19 @@
    * Two-tone icon pair, used by DuoIcon for anything representing an
    * application, module or submodule.
    *
-   * The primary follows the brand; the accent deliberately does not. Every
-   * brand's own accent shade sits in the same hue family as its primary —
-   * orange on orange, red on red — which leaves the two tones almost
-   * indistinguishable at icon sizes. One cyan across all three keeps the
-   * split readable everywhere, at the cost of a little brand purity.
+   * The primary follows the brand. The accent is the brand's adjacent hue —
+   * a turn of roughly 20–30° away from the primary, far enough to separate
+   * the two tones and near enough to stay in the same family. Each brand
+   * sets its own; the value here is blue's.
    *
-   * It is also held constant across light and dark: the value is bright
-   * enough to hold against white and saturated enough to carry on the dark
-   * surfaces, so splitting it per theme would only dilute it.
+   * What makes an accent work is that turn, not brightness. The original
+   * per-brand accents failed because they sat within 7° of their primary
+   * (orange on orange, red on red), which no amount of lightening fixes at
+   * icon sizes. Every value below clears three bars against the primary it
+   * sits with: a hue turn of at least 18°, a Lab distance of at least 28,
+   * and enough contrast against the card behind it to be seen at all — a
+   * gold that separates beautifully from burnt orange is no use if it
+   * vanishes on white.
    */
   --icon-primary: var(--acc1);
   --icon-accent: #00b4e0;
@@ -162,6 +166,10 @@
   --acc2: #f2b481;
   --acc3: #ff9a3d;
 
+  /* Deep gold. Lighter golds separate further from the burnt-orange primary
+     but wash out on a white card; this is the brightest that still holds. */
+  --icon-accent: #c99400;
+
   --focus: rgba(255, 154, 61, 0.85);
   --glow1: rgba(255, 154, 61, 0.24);
   --glow2: rgba(255, 121, 0, 0.2);
@@ -215,6 +223,11 @@
   --logo: #ff9a3d;
   --sel: #ff7900;
   --onsel: #1a1713;
+
+  /* The dark card lets the gold run to full brightness, which it needs: the
+     dark primary is itself a light orange, so the accent has to climb past
+     it rather than sit under it. */
+  --icon-accent: #ffd000;
 }
 
 /* ------------------------------------------------------------------- red -- */
@@ -239,6 +252,12 @@
   --acc1: #a81420;
   --acc2: #e0a0a6;
   --acc3: #e44a55;
+
+  /* Vermilion, one turn toward orange. It clears both of red's primaries —
+     the deep red on light and the pale rose on dark — so unlike orange this
+     brand needs only the one value, and it stays clear of `--crit`, which in
+     this brand is a deep maroon. */
+  --icon-accent: #e8590c;
 
   --focus: rgba(242, 112, 123, 0.8);
   --glow1: rgba(242, 112, 123, 0.22);

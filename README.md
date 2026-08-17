@@ -214,13 +214,30 @@ of an antenna, the knobs of a slider, the trend line over its axes. No
 positional rule lands on those consistently, so it is a drawing decision
 rather than a formula.
 
-The primary follows the brand but the accent is one cyan everywhere,
-including dark mode. Each brand's own accent shade sits in the same hue
-family as its primary — orange on orange, red on red — which leaves the two
-tones nearly indistinguishable at icon sizes; a single contrasting hue keeps
-the split readable in all three. Being decorative rather than load-bearing,
-it is tuned for visibility over contrast ratio: the primary carries the
-structure, so an icon still reads if the accent is missed entirely.
+Both tones follow the brand. The accent is the brand's adjacent hue — a turn
+of roughly 20–30° away from the primary, far enough to separate the two tones
+and near enough to stay in the same family:
+
+| brand | primary (light / dark) | accent | turn | ΔE | on card |
+| --- | --- | --- | --- | --- | --- |
+| blue | `#1e3a8a` / `#a8c6ec` | `#00b4e0` cyan | 57° / 31° | 61 / 26 | 2.4 / 6.9 |
+| orange | `#cc5f00` / `#ffa24d` | `#c99400` / `#ffd000` gold | 24° / 25° | 33 / 40 | 2.7 / 11.7 |
+| red | `#a81420` / `#f79aa2` | `#e8590c` vermilion | 19° / 34° | 36 / 58 | 3.6 / 5.0 |
+
+What makes an accent work is that turn, not brightness. The original
+per-brand accents sat within 7° of their primary — orange on orange, red on
+red — which no amount of lightening fixes at icon sizes; they were replaced
+for a while by one cyan across all three, which read everywhere but put a
+cold colour in two warm brands.
+
+Each value clears three bars against the primary it sits with: a hue turn of
+at least 18°, a Lab distance of at least 28, and enough contrast against the
+card behind it to be seen at all. That third bar is what rules out the
+obvious choices — a gold that separates beautifully from burnt orange is no
+use at 1.9:1 on a white card, which is why orange is the one brand needing a
+different accent per theme. Beyond visibility the accent is decorative rather
+than load-bearing: the primary carries the structure, so an icon still reads
+if the accent is missed entirely.
 
 Both tones are CSS variables rather than props, so a container can restate
 the pair for its own background: a selected application tile sets
