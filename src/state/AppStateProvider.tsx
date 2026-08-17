@@ -135,7 +135,12 @@ export function AppStateProvider({
     [endSession, closeAllTabs, clearNotifications],
   )
 
-  const transition = useSessionTransition({ enter: enterTasks, leave: leaveTasks })
+  const transition = useSessionTransition({
+    enter: enterTasks,
+    leave: leaveTasks,
+    // A session that came back from storage is already past the arrival.
+    initialPhase: session.restored ? 'ready' : 'idle',
+  })
 
   useEffect(() => {
     let active = true
@@ -146,6 +151,15 @@ export function AppStateProvider({
       active = false
     }
   }, [])
+
+  // The warm-up still has to run for a restored session — a reload starts
+  // with nothing fetched — but behind the app rather than behind a splash.
+  // Both dependencies are fixed for the life of the provider — `restored` is
+  // captured before anything can sign in or out — so this runs once, on boot.
+  const { resume } = transition
+  useEffect(() => {
+    if (session.restored) resume()
+  }, [session.restored, resume])
 
   const applications = useMemo(
     () => (catalog ? visibleApplications(catalog, preferences.mode === 'Normal') : []),

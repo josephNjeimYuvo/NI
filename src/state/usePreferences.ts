@@ -1,25 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import { readStored, writeStored } from '@/lib/storage'
 import type { Brand, CatalogMode, Theme } from '@/types'
 
-const THEME_STORAGE_KEY = 'ni.theme'
+const STORAGE_KEY = 'theme'
 
-function readStoredTheme(): Theme | null {
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    return stored === 'light' || stored === 'dark' ? stored : null
-  } catch {
-    // Storage can be unavailable (private mode, blocked cookies); the
-    // in-memory default is a fine fallback.
-    return null
-  }
-}
-
-function persistTheme(theme: Theme): void {
-  try {
-    localStorage.setItem(THEME_STORAGE_KEY, theme)
-  } catch {
-    // Persisting is best-effort.
-  }
+function parseTheme(raw: unknown): Theme | null {
+  return raw === 'light' || raw === 'dark' ? raw : null
 }
 
 export interface Preferences {
@@ -38,7 +24,7 @@ export interface Preferences {
  * stylesheet keys off them, so every descendant re-colours in one paint.
  */
 export function usePreferences(initialBrand: Brand = 'blue'): Preferences {
-  const [theme, setTheme] = useState<Theme>(() => readStoredTheme() ?? 'light')
+  const [theme, setTheme] = useState<Theme>(() => readStored(STORAGE_KEY, parseTheme) ?? 'light')
   const [brand, setBrand] = useState<Brand>(initialBrand)
   const [mode, setMode] = useState<CatalogMode>('Advanced')
 
@@ -51,7 +37,7 @@ export function usePreferences(initialBrand: Brand = 'blue'): Preferences {
   const toggleTheme = useCallback(() => {
     setTheme((current) => {
       const next: Theme = current === 'dark' ? 'light' : 'dark'
-      persistTheme(next)
+      writeStored(STORAGE_KEY, next)
       return next
     })
   }, [])

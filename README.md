@@ -19,7 +19,9 @@ npm run preview  # serve the production build
 npm run typecheck
 ```
 
-Sign-in accepts any non-empty email and password; the form is pre-filled.
+Sign-in accepts any non-empty email and password; the form is pre-filled. The
+session survives a reload, so refreshing lands back on the same screen — sign
+out to get the login form again.
 
 ## What's in it
 
@@ -52,7 +54,7 @@ src/
   data/         Static fixtures — the catalog, notifications, seed session
   services/     Service contracts and the fixture-backed implementation
   state/        One hook per state slice, composed by AppStateProvider
-  lib/          Icons, logo, catalog queries, formatting
+  lib/          Icons, logo, catalog queries, formatting, storage
   components/   login/ shell/ home/ module/ panels/ common/
   styles/       Design tokens and the base layer
 ```
@@ -91,6 +93,35 @@ has already left.
 authentication, because teardown clears the session partway through and the
 login screen would otherwise appear mid-splash; and the shell renders only
 at `ready`, so it cannot appear before its data has landed.
+
+**Surviving a reload.** Refreshing the page puts the user back where they
+were rather than at the sign-in form. Four slices persist through
+`lib/storage`, each owned by the hook it belongs to:
+
+| key | holds | written by |
+| --- | --- | --- |
+| `ni.session` | user, favorites, history | `useSession` |
+| `ni.tabs` | open module names, selection | `useTabs` |
+| `ni.nav` | selected application, rail or sidebar | `useNavigation` |
+| `ni.theme` | light or dark | `usePreferences` |
+
+Reads are validated by the hook that made them and a value that fails
+validation is discarded, so changing any of these shapes needs no migration —
+an older blob is simply ignored and the in-memory default stands. Every write
+is best-effort: `localStorage` throws in private modes and when cookies are
+blocked, which is not something to surface for a convenience feature.
+
+Two things follow from restoring a session rather than signing in. The
+transition machine starts at `ready` instead of `idle`, because a reload is
+not an arrival and does not deserve the splash — but the warm-up still has to
+run, so `resume()` performs the same tasks in the same order behind the app.
+And only module *names* are stored, never their contents: restored tabs come
+back in `loading` and only the active one is fetched, since restoring nine
+tabs must not fire nine requests for screens nobody is reading. The rest load
+the first time they are selected.
+
+Signing out clears the session and the tab strip, so the next visitor to the
+browser gets the login screen and an empty workspace.
 
 **Tab strip.** `TabStrip` renders every open tab into a horizontally
 scrolling track that fills whatever width the top bar has left, so how many

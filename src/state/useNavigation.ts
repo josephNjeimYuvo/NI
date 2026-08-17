@@ -1,5 +1,28 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { asRecord, readStored, writeStored } from '@/lib/storage'
 import type { ApplicationId } from '@/types'
+
+const STORAGE_KEY = 'nav'
+
+/**
+ * The parts of the navigation worth carrying across a reload: which
+ * application is selected, and whether the sidebar is a rail.
+ *
+ * Everything else here — the flyout, the filter, full screen, which
+ * categories happen to be open — is a response to what the user is doing
+ * right now, and restoring it would be restoring their last gesture rather
+ * than their place.
+ */
+interface StoredNavigation {
+  selectedApp: ApplicationId
+  collapsed: boolean
+}
+
+function parseNavigation(raw: unknown): StoredNavigation | null {
+  const record = asRecord(raw)
+  if (!record || typeof record.selectedApp !== 'string') return null
+  return { selectedApp: record.selectedApp, collapsed: record.collapsed === true }
+}
 
 /**
  * The two pseudo-sections pinned above the module categories in the sidebar.
@@ -68,11 +91,14 @@ function clampFlyoutTop(anchorTop: number): number {
 
 /** Sidebar, rail, flyout and main-menu selection state. */
 export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationState {
-  const [selectedApp, setSelectedApp] = useState<ApplicationId>(initialApp)
+  const [restored] = useState(() => readStored(STORAGE_KEY, parseNavigation))
+  const startingApp = restored?.selectedApp ?? initialApp
+
+  const [selectedApp, setSelectedApp] = useState<ApplicationId>(startingApp)
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(restored?.collapsed ?? true)
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
-    [initialApp]: true,
+    [startingApp]: true,
   })
   const [closedVendors, setClosedVendors] = useState<Record<string, boolean>>({})
   const [openSections, setOpenSections] = useState<Record<TopSection, boolean>>({
@@ -83,6 +109,10 @@ export function useNavigation(initialApp: ApplicationId = 'ran'): NavigationStat
   const [flyoutTop, setFlyoutTop] = useState(0)
   const [fullscreen, setFullscreen] = useState(false)
   const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    writeStored(STORAGE_KEY, { selectedApp, collapsed })
+  }, [selectedApp, collapsed])
 
   const selectApp = useCallback((id: ApplicationId) => {
     setSelectedApp(id)
