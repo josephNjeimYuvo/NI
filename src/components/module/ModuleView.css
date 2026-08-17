@@ -1,8 +1,8 @@
 /* ---------------------------------------------------------------- splash -- */
 
 .ni-splash {
-  position: absolute;
-  inset: 0;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,9 +34,12 @@
 
 /* ----------------------------------------------------------------- error -- */
 
+/* Fills what the breadcrumb leaves rather than covering it: absolutely
+   positioning this over the whole content area is what made the trail
+   unclickable on a failure. */
 .ni-error {
-  position: absolute;
-  inset: 0;
+  flex: 1;
+  min-height: 0;
   display: flex;
   /* Optically centred rather than measured: a block of text under a picture
      reads as sitting low when it is centred exactly, so it is lifted. */
@@ -233,9 +236,10 @@
 /* ------------------------------------------------------------ workspace -- */
 
 .ni-module {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
   animation: niFade 0.24s ease;
 }
 

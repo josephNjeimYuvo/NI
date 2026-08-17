@@ -142,6 +142,12 @@ root and the page you are actually on keep their names. Sharing the loss
 evenly truncated all four at once, which left the user reading
 "Network Insi…" — the one crumb short enough to never have needed it.
 
+`main` is a column so the trail keeps its own band and the view fills what is
+left. The loading, failure and workspace views were absolutely positioned
+across the whole of `main`, which painted them over the breadcrumb and
+swallowed every click on it — the trail looked fine and did nothing on any
+screen that was not the catalog or a loaded module.
+
 **Tab strip.** `TabStrip` renders every open tab into a horizontally
 scrolling track that fills whatever width the top bar has left, so how many
 are on screen follows the viewport instead of a fixed cap. Arrows appear

@@ -54,12 +54,26 @@ export function AppShell() {
       >
         {showChrome && <TopBar />}
 
+        {/**
+         * A column, so the breadcrumb keeps its own band and the view below
+         * fills what is left. The views used to be absolutely positioned over
+         * the whole of `main`, which painted them across the breadcrumb and
+         * swallowed every click on it.
+         */}
         <main
           id="ni-content"
           ref={layout.ref}
           tabIndex={-1}
           aria-label={viewTitle}
-          style={{ flex: 1, minHeight: 0, overflowY: 'auto', position: 'relative', outline: 'none' }}
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+            position: 'relative',
+            outline: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
         >
           {/* The page's one h1. It is not drawn — the breadcrumb and grid
               heading carry that visually — but it anchors the outline. */}
